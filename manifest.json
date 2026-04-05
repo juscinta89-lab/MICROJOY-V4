@@ -1,6 +1,6 @@
 {
-  "name": "MICROJOY PS4 TRIAL VER",
-  "short_name": "MICROJOY PS4",
+  "name": "MICROJOY PS4 v2.0",
+  "short_name": "MICROJOY PS4 v2",
   "description": "Hardware bridge for DualShock controllers",
   "start_url": ".",
   "display": "standalone",
