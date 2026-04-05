@@ -34,7 +34,6 @@
             margin: 0; padding: 0;
             width: 100%; height: 100dvh;
             background-color: var(--bg-color);
-            /* Background pattern grid */
             background-image: 
                 linear-gradient(rgba(255, 42, 42, 0.03) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(255, 42, 42, 0.03) 1px, transparent 1px);
@@ -200,7 +199,7 @@
             window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
         }
 
-        // --- SCREEN WAKE LOCK API (HALANG SCREEN PADAM) ---
+        // --- SCREEN WAKE LOCK API ---
         let wakeLock = null;
 
         async function requestWakeLock() {
@@ -230,7 +229,7 @@
         const UART_SERVICE_UUID = "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
         const UART_RX_CHARACTERISTIC_UUID = "6e400003-b5a3-f393-e0a9-e50e24dcca9e";
         let bleDevice, rxChar;
-        let cX = 0, cY = 0, lX, lY;
+        let cX = 0, cY = 0, lX = 0, lY = 0; // lX dan lY diisytiharkan awal
 
         const botCard = document.getElementById('botCard');
         const botStatusEl = document.getElementById('botStatus');
@@ -238,7 +237,7 @@
         const connBtn = document.getElementById('btnConnect');
 
         connBtn.addEventListener('click', async () => {
-            requestWakeLock(); // Panggil Wake Lock setiap kali butang connect ditekan
+            requestWakeLock();
 
             if (bleDevice?.gatt.connected) { bleDevice.gatt.disconnect(); return; }
             try {
@@ -262,19 +261,29 @@
             rxChar = null;
         });
 
+        // --- PENGHANTARAN DATA TANPA DELAY ---
+        let isSending = false;
+
         async function send(s) {
             telEl.innerText = `${s.replace('\n','')}`;
-            if (!rxChar) return;
-            try { await rxChar.writeValue(new TextEncoder().encode(s)); } catch (e) {}
+            if (!rxChar || isSending) return; 
+            
+            isSending = true;
+            try { 
+                // Semak jika characteristic menyokong WriteWithoutResponse
+                if (rxChar.properties && rxChar.properties.writeWithoutResponse) {
+                    await rxChar.writeValueWithoutResponse(new TextEncoder().encode(s));
+                } else {
+                    await rxChar.writeValue(new TextEncoder().encode(s)); 
+                }
+            } catch (e) {
+                console.warn("Kesesakan BLE, packet digugurkan:", e);
+            } finally {
+                isSending = false;
+            }
         }
 
         const fFormat = (v) => (v>=0?'+':'-') + Math.abs(v).toString().padStart(2,'0');
-        function forceKineticUpdate() {
-            if (cX !== lX || cY !== lY) {
-                send(`X${fFormat(cX)},Y${fFormat(cY)}\n`);
-                lX = cX; lY = cY;
-            }
-        }
 
         // --- GAMEPAD API (DUALSHOCK BRIDGE) ---
         const dsCard = document.getElementById('dsCard');
@@ -292,9 +301,11 @@
         let gpState = { cross: false, circle: false, square: false, triangle: false };
         const GP_DEADZONE = 0.15;
         
-        // Pembolehubah Kalibrasi
         let offsetX = 0;
         let offsetY = 0;
+        
+        let lastSendTime = 0;
+        const SEND_INTERVAL = 40; // Had kelajuan penghantaran (40ms)
 
         btnCalibrate.addEventListener('click', () => {
             const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
@@ -321,7 +332,8 @@
             outPsSquare.style.color = "var(--theme-red)"; outPsTriangle.style.color = "var(--theme-red)";
             cX = 0; cY = 0; 
             offsetX = 0; offsetY = 0;
-            forceKineticUpdate();
+            // Hantar arahan reset jika disconnected
+            send("X+00,Y+00\n"); 
         });
 
         function pollGamepad() {
@@ -353,6 +365,16 @@
                     outPsDpad.innerText = "IDLE"; outPsDpad.style.color = "var(--theme-red)";
                 }
 
+                // --- LOGIK KINETIK (Hadkan kelewatan penghantaran) ---
+                let now = Date.now();
+                if ((cX !== lX || cY !== lY) && (now - lastSendTime > SEND_INTERVAL)) {
+                    send(`X${fFormat(cX)},Y${fFormat(cY)}\n`);
+                    lX = cX; 
+                    lY = cY;
+                    lastSendTime = now;
+                }
+
+                // --- LOGIK BUTANG ---
                 if (gp.buttons[0] && gp.buttons[0].pressed && !gpState.cross) {
                     gpState.cross = true; outPsCross.innerText = "ON"; outPsCross.style.color = "var(--text-main)"; send("A\n"); 
                 } else if (gp.buttons[0] && !gp.buttons[0].pressed && gpState.cross) {
@@ -379,9 +401,9 @@
             }
             requestAnimationFrame(pollGamepad);
         }
+        
+        // Panggil polling controller
         pollGamepad(); 
-
-        setInterval(forceKineticUpdate, 50); 
     </script>
 </body>
 </html>
