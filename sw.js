@@ -1,4 +1,4 @@
-const CACHE_NAME = 'MICROJOY PS4 TRAIL VER';
+const CACHE_NAME = 'MICROJOY PS4 v2.0';
 const ASSETS = ['./', './index.html', './manifest.json', './icon.png'];
 
 self.addEventListener('install', (e) => {
