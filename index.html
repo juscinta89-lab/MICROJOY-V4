@@ -6,21 +6,24 @@
     <title>MICROJOY PS4 v2.0</title>
     
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#050505">
+    <meta name="theme-color" content="#0a0a0c">
     <link rel="apple-touch-icon" href="icon.png">
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
         :root {
-            --bg-color: #050505;
-            --panel-bg: rgba(15, 15, 15, 0.85);
-            --theme-red: #ff2a2a;
-            --theme-red-dim: #5c0000;
-            --theme-red-glow: rgba(255, 42, 42, 0.4);
+            --bg-color: #08080a;
+            --panel-bg: rgba(18, 18, 22, 0.6);
+            --panel-border: rgba(255, 255, 255, 0.08);
+            --theme-red: #ff3333;
+            --theme-red-dim: #4a0f0f;
+            --theme-red-glow: rgba(255, 51, 51, 0.5);
             --danger: #ffaa00; 
-            --text-main: #e0e0e0;
-            --cyan-glow: #00ffcc;
+            --text-main: #f0f0f0;
+            --text-muted: #888899;
+            --cyan-glow: #00e6cc;
+            --success: #00ff66;
         }
 
         * { 
@@ -35,9 +38,10 @@
             width: 100%; height: 100dvh;
             background-color: var(--bg-color);
             background-image: 
-                linear-gradient(rgba(255, 42, 42, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 42, 42, 0.03) 1px, transparent 1px);
-            background-size: 20px 20px;
+                radial-gradient(circle at 50% 0%, rgba(255, 51, 51, 0.05) 0%, transparent 50%),
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 30px 30px, 30px 30px;
             color: var(--text-main);
             overflow: hidden;
             display: flex; flex-direction: column;
@@ -45,104 +49,141 @@
 
         /* --- HEADER --- */
         .header {
-            padding: 15px; 
-            background: linear-gradient(180deg, rgba(20,0,0,0.9) 0%, rgba(5,5,5,0) 100%);
-            border-bottom: 1px solid var(--theme-red-dim);
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 15px 25px; 
+            background: rgba(10, 10, 12, 0.8);
+            border-bottom: 1px solid var(--panel-border);
+            display: flex; justify-content: space-between; align-items: center;
             z-index: 100;
-            box-shadow: 0 4px 15px rgba(255, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+        .brand-container {
+            display: flex; flex-direction: column;
         }
         .brand-line { 
-            font-weight: bold; color: var(--theme-red); 
-            letter-spacing: 3px; font-size: 1.4rem; 
-            text-shadow: 0 0 10px var(--theme-red-glow);
+            font-weight: bold; color: var(--text-main); 
+            letter-spacing: 2px; font-size: 1.2rem; 
+            text-shadow: 0 0 10px rgba(255,255,255,0.2);
+            display: flex; align-items: center; gap: 8px;
         }
-        .ver-tag { color: #888; font-size: 0.8rem; margin-top: 4px; letter-spacing: 2px; }
+        .brand-line::before {
+            content: ''; display: inline-block; width: 8px; height: 8px; background: var(--theme-red);
+            border-radius: 50%; box-shadow: 0 0 8px var(--theme-red);
+        }
+        .ver-tag { color: var(--theme-red); font-size: 0.75rem; margin-top: 4px; letter-spacing: 3px; }
+        
+        .btn-icon {
+            background: transparent; border: 1px solid var(--panel-border);
+            color: var(--text-muted); padding: 8px 15px; border-radius: 6px;
+            cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px;
+            font-size: 0.9rem;
+        }
+        .btn-icon:hover { background: rgba(255,255,255,0.05); color: var(--text-main); }
+        .btn-icon:active { transform: scale(0.95); }
 
         /* --- MAIN DASHBOARD --- */
         .dashboard {
             flex: 1; display: flex; flex-direction: column;
-            align-items: center; padding: 20px; gap: 20px;
+            align-items: center; padding: 25px; gap: 25px;
             overflow-y: auto;
         }
 
         /* --- TELEMETRY HUD --- */
         .telemetry-panel {
-            width: 100%; max-width: 500px;
+            width: 100%; max-width: 550px;
             background: var(--panel-bg); 
-            border: 1px solid var(--theme-red-dim);
-            border-radius: 12px; padding: 20px;
-            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.8), 0 5px 15px rgba(0,0,0,0.5);
-            backdrop-filter: blur(5px);
+            border: 1px solid var(--panel-border);
+            border-radius: 16px; padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
         
         .tel-header { 
-            color: #777; font-size: 0.8rem; 
-            border-bottom: 1px solid #333; padding-bottom: 8px; margin-bottom: 15px; 
-            text-transform: uppercase; letter-spacing: 2px; 
+            color: var(--text-muted); font-size: 0.85rem; 
+            border-bottom: 1px solid var(--panel-border); padding-bottom: 10px; margin-bottom: 20px; 
+            text-transform: uppercase; letter-spacing: 2px; display: flex; justify-content: space-between;
         }
 
         .tel-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px 20px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px 25px;
         }
 
-        .tel-row { display: flex; justify-content: space-between; font-size: 1rem; color: #aaa; }
-        .tel-value { color: var(--theme-red); font-weight: bold; text-shadow: 0 0 5px var(--theme-red-glow); }
+        .tel-row { 
+            display: flex; justify-content: space-between; align-items: center; 
+            font-size: 1.05rem; color: var(--text-muted); 
+            background: rgba(0,0,0,0.2); padding: 8px 12px; border-radius: 6px;
+        }
+        .tel-value { color: var(--text-main); font-weight: bold; }
+        .val-active { color: var(--theme-red); text-shadow: 0 0 8px var(--theme-red-glow); }
         
         .tel-tx-row { 
-            border-top: 1px dashed #444; padding-top: 15px; margin-top: 10px; 
-            font-size: 1.2rem; color: #fff; display: flex; justify-content: space-between;
+            background: rgba(0, 230, 204, 0.05); border: 1px solid rgba(0, 230, 204, 0.1);
+            padding: 15px; border-radius: 8px; margin-top: 15px; 
+            font-size: 1.2rem; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;
         }
-        .tel-tx-val { color: var(--cyan-glow); text-shadow: 0 0 10px rgba(0,255,204,0.4); font-weight: bold; }
+        .tel-tx-val { color: var(--cyan-glow); text-shadow: 0 0 12px rgba(0,255,204,0.3); font-weight: bold; letter-spacing: 1px; }
 
         /* --- STATUS CLUSTER --- */
         .status-cluster {
-            display: flex; width: 100%; max-width: 500px; gap: 15px;
+            display: flex; width: 100%; max-width: 550px; gap: 20px;
         }
 
         .status-card {
             flex: 1; background: var(--panel-bg);
-            border: 1px solid #333; border-radius: 12px;
-            padding: 20px 15px; display: flex; flex-direction: column;
+            border: 1px solid var(--panel-border); border-radius: 16px;
+            padding: 25px 20px; display: flex; flex-direction: column;
             align-items: center; justify-content: space-between;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            transition: all 0.3s ease; position: relative; overflow: hidden;
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
         }
         
-        /* Neon top border for cards */
         .status-card::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px;
-            background: #333; transition: all 0.3s ease;
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+            background: var(--text-muted); transition: all 0.4s ease; opacity: 0.3;
         }
 
-        .status-card.active { 
-            border-color: var(--theme-red-dim); 
-            box-shadow: 0 0 20px rgba(255, 42, 42, 0.05); 
-        }
-        .status-card.active::before { background: var(--theme-red); box-shadow: 0 0 10px var(--theme-red); }
+        .status-card.active { border-color: rgba(255, 51, 51, 0.3); }
+        .status-card.active::before { background: var(--theme-red); opacity: 1; box-shadow: 0 0 15px var(--theme-red); }
+        .status-card.active-success { border-color: rgba(0, 255, 102, 0.3); }
+        .status-card.active-success::before { background: var(--success); opacity: 1; box-shadow: 0 0 15px var(--success); }
         
-        .card-title { font-size: 0.8rem; color: #888; letter-spacing: 1px; margin-bottom: 15px; text-align: center; }
-        .card-indicator { font-size: 1.1rem; font-weight: bold; color: var(--danger); margin-bottom: 20px; text-align: center; }
+        .card-title { font-size: 0.85rem; color: var(--text-muted); letter-spacing: 2px; margin-bottom: 15px; text-align: center; }
+        .card-indicator { 
+            font-size: 1.1rem; font-weight: bold; color: var(--text-muted); margin-bottom: 25px; text-align: center; 
+            letter-spacing: 1px; transition: color 0.3s;
+        }
         .status-card.active .card-indicator { color: var(--theme-red); text-shadow: 0 0 10px var(--theme-red-glow); }
+        .status-card.active-success .card-indicator { color: var(--success); text-shadow: 0 0 10px rgba(0,255,102,0.4); }
 
         .btn-action {
-            width: 100%; background: linear-gradient(180deg, rgba(255, 42, 42, 0.1) 0%, rgba(0,0,0,0) 100%);
-            color: var(--theme-red); border: 1px solid var(--theme-red);
-            padding: 12px 0; border-radius: 8px; font-size: 0.9rem;
-            font-weight: bold; letter-spacing: 1px; cursor: pointer;
-            transition: all 0.2s;
+            width: 100%; background: rgba(255, 255, 255, 0.03);
+            color: var(--text-main); border: 1px solid var(--panel-border);
+            padding: 14px 0; border-radius: 8px; font-size: 0.95rem;
+            font-weight: bold; letter-spacing: 2px; cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             text-transform: uppercase;
         }
-        .btn-action:active { background: var(--theme-red); color: #000; box-shadow: 0 0 15px var(--theme-red); }
+        .btn-action:hover { background: rgba(255, 255, 255, 0.08); transform: translateY(-2px); }
+        .btn-action:active { transform: translateY(1px); }
+        
+        .btn-red { border-color: rgba(255,51,51,0.4); color: #ff6b6b; background: rgba(255,51,51,0.05); }
+        .btn-red:hover { background: rgba(255,51,51,0.15); box-shadow: 0 5px 15px rgba(255,51,51,0.2); color: #fff;}
 
-        .hint-text { font-size: 0.65rem; color: #666; text-align: center; margin-top: 10px; letter-spacing: 1px; }
+        .hint-text { font-size: 0.7rem; color: var(--text-muted); text-align: center; margin-top: 15px; letter-spacing: 1px; opacity: 0.7; }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        .anim-pulse { animation: pulse 2s infinite; }
 
         @media (orientation: landscape) {
             .dashboard { flex-direction: row; justify-content: center; align-items: stretch; }
-            .telemetry-panel { flex: 1.5; }
+            .telemetry-panel { flex: 1.5; margin-bottom: 0; }
             .status-cluster { flex: 1; flex-direction: column; }
         }
     </style>
@@ -150,14 +191,17 @@
 <body>
 
     <div class="header">
-        <div class="brand-line">MICROJOY PS4 by ALIMIN</div>
-        <div class="ver-tag">SYSTEM v2.0</div>
+        <div class="brand-container">
+            <div class="brand-line">MICROJOY PS4</div>
+            <div class="ver-tag">SYSTEM v2.0 // ALIMIN</div>
+        </div>
+        <button class="btn-icon" id="btnFullscreen">⛶ FULLSCREEN</button>
     </div>
 
     <div class="dashboard">
         
         <div class="telemetry-panel">
-            <div class="tel-header">DualShock Raw Input</div>
+            <div class="tel-header"><span>DualShock Raw Input</span> <span>DATA LINK</span></div>
             
             <div class="tel-grid">
                 <div class="tel-row"><span>AXIS-X:</span><span class="tel-value" id="psX">0.00</span></div>
@@ -169,24 +213,24 @@
                 <div class="tel-row" style="grid-column: 1 / span 2;"><span>[△] D:</span><span class="tel-value" id="psTriangle">OFF</span></div>
             </div>
 
-            <div class="tel-header" style="margin-top: 25px;">Micro:bit Payload</div>
+            <div class="tel-header" style="margin-top: 30px;">Micro:bit Payload</div>
             <div class="tel-tx-row">
-                <span>TX_OUT:</span><span class="tel-tx-val" id="telemetryOut">AWAITING</span>
+                <span>TX_OUT:</span><span class="tel-tx-val anim-pulse" id="telemetryOut">AWAITING</span>
             </div>
         </div>
 
         <div class="status-cluster">
             <div class="status-card" id="dsCard">
                 <div class="card-title">DUALSHOCK 4</div>
-                <div class="card-indicator" id="dsStatus">AWAITING PAIR</div>
+                <div class="card-indicator anim-pulse" id="dsStatus">AWAITING PAIR</div>
                 <button class="btn-action" id="btnCalibrate">CALIBRATE</button>
-                <div class="hint-text">Press PS Button</div>
+                <div class="hint-text">Press PS Button to Connect</div>
             </div>
 
             <div class="status-card" id="botCard">
                 <div class="card-title">MICRO:BIT LINK</div>
-                <div class="card-indicator" id="botStatus">OFFLINE</div>
-                <button class="btn-action" id="btnConnect">LINK BLE</button>
+                <div class="card-indicator anim-pulse" id="botStatus">OFFLINE</div>
+                <button class="btn-action btn-red" id="btnConnect">LINK BLE</button>
                 <div class="hint-text">Wake Lock Enabled</div>
             </div>
         </div>
@@ -199,24 +243,39 @@
             window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
         }
 
-        // --- SCREEN WAKE LOCK API ---
+        // --- FULLSCREEN MANAGEMENT ---
+        const btnFullscreen = document.getElementById('btnFullscreen');
+        
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.warn(`Ralat Fullscreen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+            }
+        }
+
+        btnFullscreen.addEventListener('click', toggleFullscreen);
+
+        // --- SCREEN WAKE LOCK API & FIRST CLICK HANDLER ---
         let wakeLock = null;
 
         async function requestWakeLock() {
             try {
                 wakeLock = await navigator.wakeLock.request('screen');
                 console.log('Wake Lock Aktif: Screen tidak akan terpadam.');
-                
-                wakeLock.addEventListener('release', () => {
-                    console.log('Wake Lock terlepas.');
-                });
+                wakeLock.addEventListener('release', () => console.log('Wake Lock terlepas.'));
             } catch (err) {
                 console.error(`Wake Lock Error: ${err.name}, ${err.message}`);
             }
         }
 
+        // Aktifkan wakelock dan cuba fullscreen pada klik pertama skrin
         document.addEventListener('click', () => {
             if (!wakeLock) requestWakeLock();
+            // Optional: Jika mahu auto-fullscreen pada sebarang klik pertama
+            // if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
         }, { once: true });
 
         document.addEventListener('visibilitychange', async () => {
@@ -229,7 +288,7 @@
         const UART_SERVICE_UUID = "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
         const UART_RX_CHARACTERISTIC_UUID = "6e400003-b5a3-f393-e0a9-e50e24dcca9e";
         let bleDevice, rxChar;
-        let cX = 0, cY = 0, lX = 0, lY = 0; // lX dan lY diisytiharkan awal
+        let cX = 0, cY = 0, lX = 0, lY = 0;
 
         const botCard = document.getElementById('botCard');
         const botStatusEl = document.getElementById('botStatus');
@@ -249,15 +308,24 @@
                 const service = await server.getPrimaryService(UART_SERVICE_UUID);
                 rxChar = await service.getCharacteristic(UART_RX_CHARACTERISTIC_UUID);
                 
-                botStatusEl.innerText = "LINK ESTABLISHED"; botCard.classList.add('active');
+                botStatusEl.innerText = "LINK ESTABLISHED"; 
+                botStatusEl.classList.remove('anim-pulse');
+                botCard.classList.add('active-success');
                 connBtn.innerText = "SEVER CONNECTION";
+                connBtn.classList.remove('btn-red');
+                telEl.classList.remove('anim-pulse');
                 await send("mode_analog\n");
             } catch (e) { console.error("BLE Error:", e); }
         });
 
         bleDevice?.addEventListener('gattserverdisconnected', () => {
-            botStatusEl.innerText = "OFFLINE"; botCard.classList.remove('active');
-            connBtn.innerText = "LINK BLE"; telEl.innerText = "SEVERED";
+            botStatusEl.innerText = "OFFLINE"; 
+            botStatusEl.classList.add('anim-pulse');
+            botCard.classList.remove('active-success');
+            connBtn.innerText = "LINK BLE"; 
+            connBtn.classList.add('btn-red');
+            telEl.innerText = "SEVERED";
+            telEl.classList.add('anim-pulse');
             rxChar = null;
         });
 
@@ -270,7 +338,6 @@
             
             isSending = true;
             try { 
-                // Semak jika characteristic menyokong WriteWithoutResponse
                 if (rxChar.properties && rxChar.properties.writeWithoutResponse) {
                     await rxChar.writeValueWithoutResponse(new TextEncoder().encode(s));
                 } else {
@@ -305,7 +372,7 @@
         let offsetY = 0;
         
         let lastSendTime = 0;
-        const SEND_INTERVAL = 40; // Had kelajuan penghantaran (40ms)
+        const SEND_INTERVAL = 40;
 
         btnCalibrate.addEventListener('click', () => {
             const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
@@ -320,21 +387,29 @@
         });
 
         window.addEventListener("gamepadconnected", (e) => {
-            dsStatusEl.innerText = "DS4 ACQUIRED"; dsCard.classList.add('active');
+            dsStatusEl.innerText = "DS4 ACQUIRED"; 
+            dsStatusEl.classList.remove('anim-pulse');
+            dsCard.classList.add('active');
         });
 
         window.addEventListener("gamepaddisconnected", (e) => {
-            dsStatusEl.innerText = "AWAITING PAIR"; dsCard.classList.remove('active');
-            outPsX.innerText = "0.00"; outPsY.innerText = "0.00"; outPsDpad.innerText = "IDLE";
+            dsStatusEl.innerText = "AWAITING PAIR"; 
+            dsStatusEl.classList.add('anim-pulse');
+            dsCard.classList.remove('active');
+            outPsX.innerText = "0.00"; outPsY.innerText = "0.00"; 
+            outPsDpad.innerText = "IDLE"; outPsDpad.classList.remove('val-active');
             outPsCross.innerText = "OFF"; outPsCircle.innerText = "OFF";
             outPsSquare.innerText = "OFF"; outPsTriangle.innerText = "OFF";
-            outPsCross.style.color = "var(--theme-red)"; outPsCircle.style.color = "var(--theme-red)";
-            outPsSquare.style.color = "var(--theme-red)"; outPsTriangle.style.color = "var(--theme-red)";
-            cX = 0; cY = 0; 
-            offsetX = 0; offsetY = 0;
-            // Hantar arahan reset jika disconnected
+            [outPsCross, outPsCircle, outPsSquare, outPsTriangle].forEach(el => el.classList.remove('val-active'));
+            cX = 0; cY = 0; offsetX = 0; offsetY = 0;
             send("X+00,Y+00\n"); 
         });
+
+        function updateBtnUI(element, isPressed, labelOn = "ON", labelOff = "OFF") {
+            element.innerText = isPressed ? labelOn : labelOff;
+            if(isPressed) element.classList.add('val-active');
+            else element.classList.remove('val-active');
+        }
 
         function pollGamepad() {
             const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
@@ -348,6 +423,11 @@
                 ay = Math.max(-1, Math.min(1, ay));
                 
                 outPsX.innerText = ax.toFixed(2); outPsY.innerText = ay.toFixed(2);
+                if (Math.abs(ax) > GP_DEADZONE || Math.abs(ay) > GP_DEADZONE) {
+                    outPsX.classList.add('val-active'); outPsY.classList.add('val-active');
+                } else {
+                    outPsX.classList.remove('val-active'); outPsY.classList.remove('val-active');
+                }
 
                 if (Math.abs(ax) < GP_DEADZONE) ax = 0;
                 if (Math.abs(ay) < GP_DEADZONE) ay = 0;
@@ -359,50 +439,46 @@
                 if (gp.buttons[15] && gp.buttons[15].pressed) { dpX = 90; dpadActive = true; }  
 
                 if (dpadActive) {
-                    cX = dpX; cY = dpY; outPsDpad.innerText = "ACTIVE"; outPsDpad.style.color = "var(--text-main)";
+                    cX = dpX; cY = dpY; updateBtnUI(outPsDpad, true, "ACTIVE");
                 } else {
                     cX = Math.round(ax * 90); cY = Math.round(-ay * 90);
-                    outPsDpad.innerText = "IDLE"; outPsDpad.style.color = "var(--theme-red)";
+                    updateBtnUI(outPsDpad, false, "ON", "IDLE");
                 }
 
-                // --- LOGIK KINETIK (Hadkan kelewatan penghantaran) ---
                 let now = Date.now();
                 if ((cX !== lX || cY !== lY) && (now - lastSendTime > SEND_INTERVAL)) {
                     send(`X${fFormat(cX)},Y${fFormat(cY)}\n`);
-                    lX = cX; 
-                    lY = cY;
-                    lastSendTime = now;
+                    lX = cX; lY = cY; lastSendTime = now;
                 }
 
                 // --- LOGIK BUTANG ---
                 if (gp.buttons[0] && gp.buttons[0].pressed && !gpState.cross) {
-                    gpState.cross = true; outPsCross.innerText = "ON"; outPsCross.style.color = "var(--text-main)"; send("A\n"); 
+                    gpState.cross = true; updateBtnUI(outPsCross, true); send("A\n"); 
                 } else if (gp.buttons[0] && !gp.buttons[0].pressed && gpState.cross) {
-                    gpState.cross = false; outPsCross.innerText = "OFF"; outPsCross.style.color = "var(--theme-red)"; send("a\n");
+                    gpState.cross = false; updateBtnUI(outPsCross, false); send("a\n");
                 }
 
                 if (gp.buttons[1] && gp.buttons[1].pressed && !gpState.circle) {
-                    gpState.circle = true; outPsCircle.innerText = "ON"; outPsCircle.style.color = "var(--text-main)"; send("B\n"); 
+                    gpState.circle = true; updateBtnUI(outPsCircle, true); send("B\n"); 
                 } else if (gp.buttons[1] && !gp.buttons[1].pressed && gpState.circle) {
-                    gpState.circle = false; outPsCircle.innerText = "OFF"; outPsCircle.style.color = "var(--theme-red)"; send("b\n");
+                    gpState.circle = false; updateBtnUI(outPsCircle, false); send("b\n");
                 }
 
                 if (gp.buttons[2] && gp.buttons[2].pressed && !gpState.square) {
-                    gpState.square = true; outPsSquare.innerText = "ON"; outPsSquare.style.color = "var(--text-main)"; send("C\n"); 
+                    gpState.square = true; updateBtnUI(outPsSquare, true); send("C\n"); 
                 } else if (gp.buttons[2] && !gp.buttons[2].pressed && gpState.square) {
-                    gpState.square = false; outPsSquare.innerText = "OFF"; outPsSquare.style.color = "var(--theme-red)"; send("c\n");
+                    gpState.square = false; updateBtnUI(outPsSquare, false); send("c\n");
                 }
 
                 if (gp.buttons[3] && gp.buttons[3].pressed && !gpState.triangle) {
-                    gpState.triangle = true; outPsTriangle.innerText = "ON"; outPsTriangle.style.color = "var(--text-main)"; send("D\n"); 
+                    gpState.triangle = true; updateBtnUI(outPsTriangle, true); send("D\n"); 
                 } else if (gp.buttons[3] && !gp.buttons[3].pressed && gpState.triangle) {
-                    gpState.triangle = false; outPsTriangle.innerText = "OFF"; outPsTriangle.style.color = "var(--theme-red)"; send("d\n");
+                    gpState.triangle = false; updateBtnUI(outPsTriangle, false); send("d\n");
                 }
             }
             requestAnimationFrame(pollGamepad);
         }
         
-        // Panggil polling controller
         pollGamepad(); 
     </script>
 </body>
