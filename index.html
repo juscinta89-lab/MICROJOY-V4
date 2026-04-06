@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>MICROJOY PS4 v2.0</title>
+    <title>MICROJOY UNIVERSAL v2.1</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0a0a0c">
@@ -73,6 +73,10 @@
         }
         .ver-tag { color: var(--theme-red); font-size: 0.75rem; margin-top: 4px; letter-spacing: 3px; }
         
+        .header-controls {
+            display: flex; gap: 10px; align-items: center;
+        }
+
         .btn-icon {
             background: transparent; border: 1px solid var(--panel-border);
             color: var(--text-muted); padding: 8px 15px; border-radius: 6px;
@@ -81,6 +85,17 @@
         }
         .btn-icon:hover { background: rgba(255,255,255,0.05); color: var(--text-main); }
         .btn-icon:active { transform: scale(0.95); }
+
+        select.btn-icon {
+            appearance: none;
+            -webkit-appearance: none;
+            background-color: rgba(10, 10, 12, 0.8);
+            outline: none;
+        }
+        select.btn-icon option {
+            background-color: #08080a;
+            color: var(--text-main);
+        }
 
         /* --- MAIN DASHBOARD --- */
         .dashboard {
@@ -192,25 +207,32 @@
 
     <div class="header">
         <div class="brand-container">
-            <div class="brand-line">MICROJOY PS4</div>
-            <div class="ver-tag">SYSTEM v2.0 // ALIMIN</div>
+            <div class="brand-line">MICROJOY UNIVERSAL</div>
+            <div class="ver-tag">SYSTEM v2.1 // ALIMIN</div>
         </div>
-        <button class="btn-icon" id="btnFullscreen">⛶ FULLSCREEN</button>
+        <div class="header-controls">
+            <select id="controllerType" class="btn-icon">
+                <option value="ps4">🎮 PS4/DSense</option>
+                <option value="xbox">🎮 Xbox</option>
+                <option value="generic">🎮 Generic</option>
+            </select>
+            <button class="btn-icon" id="btnFullscreen">⛶ FULLSCREEN</button>
+        </div>
     </div>
 
     <div class="dashboard">
         
         <div class="telemetry-panel">
-            <div class="tel-header"><span>DualShock Raw Input</span> <span>DATA LINK</span></div>
+            <div class="tel-header"><span>Controller Raw Input</span> <span>DATA LINK</span></div>
             
             <div class="tel-grid">
                 <div class="tel-row"><span>AXIS-X:</span><span class="tel-value" id="psX">0.00</span></div>
                 <div class="tel-row"><span>AXIS-Y:</span><span class="tel-value" id="psY">0.00</span></div>
                 <div class="tel-row"><span>D-PAD:</span><span class="tel-value" id="psDpad">IDLE</span></div>
-                <div class="tel-row"><span>[✕] A:</span><span class="tel-value" id="psCross">OFF</span></div>
-                <div class="tel-row"><span>[◯] B:</span><span class="tel-value" id="psCircle">OFF</span></div>
-                <div class="tel-row"><span>[□] C:</span><span class="tel-value" id="psSquare">OFF</span></div>
-                <div class="tel-row" style="grid-column: 1 / span 2;"><span>[△] D:</span><span class="tel-value" id="psTriangle">OFF</span></div>
+                <div class="tel-row"><span id="lblBtn0">[✕] A:</span><span class="tel-value" id="psCross">OFF</span></div>
+                <div class="tel-row"><span id="lblBtn1">[◯] B:</span><span class="tel-value" id="psCircle">OFF</span></div>
+                <div class="tel-row"><span id="lblBtn2">[□] C:</span><span class="tel-value" id="psSquare">OFF</span></div>
+                <div class="tel-row" style="grid-column: 1 / span 2;"><span id="lblBtn3">[△] D:</span><span class="tel-value" id="psTriangle">OFF</span></div>
             </div>
 
             <div class="tel-header" style="margin-top: 30px;">Micro:bit Payload</div>
@@ -221,10 +243,10 @@
 
         <div class="status-cluster">
             <div class="status-card" id="dsCard">
-                <div class="card-title">DUALSHOCK 4</div>
+                <div class="card-title" id="controllerTitle">PLAYSTATION CONTROLLER</div>
                 <div class="card-indicator anim-pulse" id="dsStatus">AWAITING PAIR</div>
                 <button class="btn-action" id="btnCalibrate">CALIBRATE</button>
-                <div class="hint-text">Press PS Button to Connect</div>
+                <div class="hint-text">Press Start/PS Button to Connect</div>
             </div>
 
             <div class="status-card" id="botCard">
@@ -242,6 +264,42 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
         }
+
+        // --- UI & CONTROLLER TYPE SELECTION ---
+        const controllerType = document.getElementById('controllerType');
+        const lblBtn0 = document.getElementById('lblBtn0');
+        const lblBtn1 = document.getElementById('lblBtn1');
+        const lblBtn2 = document.getElementById('lblBtn2');
+        const lblBtn3 = document.getElementById('lblBtn3');
+        const controllerTitle = document.getElementById('controllerTitle');
+        const dsStatusEl = document.getElementById('dsStatus');
+
+        const controllerProfiles = {
+            ps4: {
+                title: "PLAYSTATION CONTROLLER",
+                btn0: "[✕] A:", btn1: "[◯] B:", btn2: "[□] C:", btn3: "[△] D:"
+            },
+            xbox: {
+                title: "XBOX CONTROLLER",
+                btn0: "[A] A:", btn1: "[B] B:", btn2: "[X] C:", btn3: "[Y] D:"
+            },
+            generic: {
+                title: "GENERIC GAMEPAD",
+                btn0: "[B0] A:", btn1: "[B1] B:", btn2: "[B2] C:", btn3: "[B3] D:"
+            }
+        };
+
+        controllerType.addEventListener('change', (e) => {
+            const profile = controllerProfiles[e.target.value];
+            controllerTitle.innerText = profile.title;
+            lblBtn0.innerText = profile.btn0;
+            lblBtn1.innerText = profile.btn1;
+            lblBtn2.innerText = profile.btn2;
+            lblBtn3.innerText = profile.btn3;
+            
+            // Semak jika gamepad tiada yang bersambung, set balik text
+            if (!navigator.getGamepads()[0]) dsStatusEl.innerText = "AWAITING PAIR";
+        });
 
         // --- FULLSCREEN MANAGEMENT ---
         const btnFullscreen = document.getElementById('btnFullscreen');
@@ -271,11 +329,8 @@
             }
         }
 
-        // Aktifkan wakelock dan cuba fullscreen pada klik pertama skrin
         document.addEventListener('click', () => {
             if (!wakeLock) requestWakeLock();
-            // Optional: Jika mahu auto-fullscreen pada sebarang klik pertama
-            // if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
         }, { once: true });
 
         document.addEventListener('visibilitychange', async () => {
@@ -352,9 +407,8 @@
 
         const fFormat = (v) => (v>=0?'+':'-') + Math.abs(v).toString().padStart(2,'0');
 
-        // --- GAMEPAD API (DUALSHOCK BRIDGE) ---
+        // --- GAMEPAD API BRIDGE ---
         const dsCard = document.getElementById('dsCard');
-        const dsStatusEl = document.getElementById('dsStatus');
         const btnCalibrate = document.getElementById('btnCalibrate');
         
         const outPsX = document.getElementById('psX');
@@ -387,7 +441,7 @@
         });
 
         window.addEventListener("gamepadconnected", (e) => {
-            dsStatusEl.innerText = "DS4 ACQUIRED"; 
+            dsStatusEl.innerText = "CONTROLLER ACQUIRED"; 
             dsStatusEl.classList.remove('anim-pulse');
             dsCard.classList.add('active');
         });
