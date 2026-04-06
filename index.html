@@ -86,6 +86,13 @@
         .btn-icon:hover { background: rgba(255,255,255,0.05); color: var(--text-main); }
         .btn-icon:active { transform: scale(0.95); }
 
+        /* Khusus untuk butang fullscreen agar ikon nampak seimbang di tengah */
+        #btnFullscreen {
+            padding: 8px 12px;
+            font-size: 1.2rem;
+            justify-content: center;
+        }
+
         select.btn-icon {
             appearance: none;
             -webkit-appearance: none;
@@ -216,7 +223,7 @@
                 <option value="xbox">🎮 Xbox</option>
                 <option value="generic">🎮 Generic</option>
             </select>
-            <button class="btn-icon" id="btnFullscreen">⛶ FULLSCREEN</button>
+            <button class="btn-icon" id="btnFullscreen" aria-label="Fullscreen">⛶</button>
         </div>
     </div>
 
