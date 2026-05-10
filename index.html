@@ -1263,8 +1263,10 @@
                 setSvgPressed(svgDpadRight, rightPressed);
 
                 let dpadActive = false; let dpX = 0; let dpY = 0;
-                if (downPressed)  { dpY =  90; dpadActive = true; }
-                if (upPressed)    { dpY = -90; dpadActive = true; }
+                // BUGFIX: D-pad Y direction was inverted relative to stick.
+                // Stick uses Y-positive = up (forward), so D-pad must too.
+                if (upPressed)    { dpY =  90; dpadActive = true; }
+                if (downPressed)  { dpY = -90; dpadActive = true; }
                 if (leftPressed)  { dpX = -90; dpadActive = true; }
                 if (rightPressed) { dpX =  90; dpadActive = true; }
 
