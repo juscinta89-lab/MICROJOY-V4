@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>MICROJOY UNIVERSAL v2.3</title>
+    <title>MICROJOY UNIVERSAL v2.4</title>
 
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0a0a0c" id="metaThemeColor">
@@ -12,7 +12,6 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
-        /* ============== DARK THEME (DEFAULT) ============== */
         :root,
         :root[data-theme="dark"] {
             --bg-color: #08080a;
@@ -29,17 +28,6 @@
             --select-bg: rgba(10, 10, 12, 0.8);
             --select-option-bg: #08080a;
 
-            /* Controller body shades */
-            --pad-body: #1a1a1f;
-            --pad-body-2: #25252c;
-            --pad-edge: #0a0a0c;
-            --pad-stick: #15151a;
-            --pad-stick-rim: rgba(255, 255, 255, 0.15);
-            --pad-button-base: #2a2a32;
-            --pad-button-rim: rgba(255, 255, 255, 0.1);
-            --pad-shadow: rgba(0, 0, 0, 0.6);
-            --pad-highlight: rgba(255, 255, 255, 0.06);
-
             --theme-red: #ff3333;
             --theme-red-dim: #4a0f0f;
             --theme-red-glow: rgba(255, 51, 51, 0.5);
@@ -50,10 +38,7 @@
             --success: #00ff66;
             --success-shadow: rgba(0, 255, 102, 0.4);
 
-            /* Brand colors per profile */
-            --ps-blue: #003791;
             --ps-light: #0070d1;
-            --xbox-green: #107c10;
             --xbox-light: #9bf00b;
             --gen-amber: #ffaa00;
 
@@ -64,7 +49,6 @@
             --toast-bg: rgba(20, 20, 25, 0.95);
         }
 
-        /* ============== LIGHT THEME ============== */
         :root[data-theme="light"] {
             --bg-color: #f4f5f7;
             --bg-grid: rgba(0, 0, 0, 0.04);
@@ -80,17 +64,6 @@
             --select-bg: rgba(255, 255, 255, 0.9);
             --select-option-bg: #ffffff;
 
-            /* Controller body — keep dark for contrast against light bg */
-            --pad-body: #2a2c33;
-            --pad-body-2: #3a3d45;
-            --pad-edge: #1a1c22;
-            --pad-stick: #1f2128;
-            --pad-stick-rim: rgba(255, 255, 255, 0.2);
-            --pad-button-base: #4a4d57;
-            --pad-button-rim: rgba(255, 255, 255, 0.15);
-            --pad-shadow: rgba(0, 0, 0, 0.25);
-            --pad-highlight: rgba(255, 255, 255, 0.1);
-
             --theme-red: #d92020;
             --theme-red-dim: #fde0e0;
             --theme-red-glow: rgba(217, 32, 32, 0.35);
@@ -101,9 +74,7 @@
             --success: #16a34a;
             --success-shadow: rgba(22, 163, 74, 0.35);
 
-            --ps-blue: #003791;
             --ps-light: #0070d1;
-            --xbox-green: #107c10;
             --xbox-light: #6fb800;
             --gen-amber: #d97706;
 
@@ -136,7 +107,6 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* --- HEADER --- */
         .header {
             padding: 15px 25px;
             background: var(--header-bg);
@@ -190,14 +160,12 @@
             color: var(--text-main);
         }
 
-        /* --- MAIN DASHBOARD --- */
         .dashboard {
             flex: 1; display: flex; flex-direction: column;
             align-items: center; padding: 20px; gap: 20px;
             overflow-y: auto;
         }
 
-        /* --- CONTROLLER VISUAL PANEL --- */
         .controller-panel {
             width: 100%; max-width: 600px;
             background: var(--panel-bg);
@@ -221,6 +189,7 @@
             justify-content: center;
             margin-bottom: 8px;
         }
+
         /* ============= LINE-ART CONTROLLER STYLE ============= */
         .ctl-svg-wrap svg {
             width: 100%;
@@ -231,18 +200,15 @@
             stroke-linejoin: round;
             stroke-linecap: round;
         }
-        /* Default outline weight */
         .ctl-svg-wrap svg .line-body { stroke-width: 1.6; fill: none; }
         .ctl-svg-wrap svg .line-mid  { stroke-width: 1.2; fill: none; }
         .ctl-svg-wrap svg .line-thin { stroke-width: 0.8; fill: none; opacity: 0.7; }
-        .ctl-svg-wrap svg .line-fill { fill: var(--text-main); opacity: 0.04; stroke: none; }
         .ctl-svg-wrap svg text {
             stroke: none;
             fill: var(--text-muted);
             font-family: 'Share Tech Mono', monospace;
         }
 
-        /* SVG element states - controlled via classes from JS */
         .pad-btn { transition: all 0.15s ease-out; }
         .pad-btn .btn-outline { stroke-width: 1.4; }
         .pad-btn .btn-glyph   { stroke-width: 1.4; }
@@ -273,7 +239,6 @@
             filter: drop-shadow(0 0 5px var(--cyan-glow));
         }
 
-        /* Per-button accent colors */
         .btn-cross    { color: #6dc2ff; }
         .btn-circle   { color: #ff5f5f; }
         .btn-square   { color: #ff7ee0; }
@@ -284,7 +249,6 @@
         .btn-xbox-y   { color: #ffcc00; }
         .btn-gen      { color: var(--gen-amber); }
 
-        /* Mini telemetry strip */
         .ctl-status-strip {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -318,7 +282,6 @@
             text-shadow: 0 0 8px var(--theme-red-glow);
         }
 
-        /* Axis raw display */
         .axis-row {
             display: flex;
             justify-content: space-between;
@@ -338,7 +301,6 @@
         .axis-cell .axis-val { color: var(--text-main); font-weight: bold; }
         .axis-cell .axis-val.val-active { color: var(--theme-red); text-shadow: 0 0 8px var(--theme-red-glow); }
 
-        /* TX payload row */
         .tel-tx-row {
             background: var(--tx-bg); border: 1px solid var(--tx-border);
             padding: 12px 15px; border-radius: 8px; margin-top: 12px;
@@ -347,7 +309,6 @@
         }
         .tel-tx-val { color: var(--cyan-glow); text-shadow: 0 0 12px var(--cyan-shadow); font-weight: bold; }
 
-        /* --- STATUS CLUSTER --- */
         .status-cluster { display: flex; width: 100%; max-width: 600px; gap: 15px; }
 
         .status-card {
@@ -391,7 +352,6 @@
 
         .hint-text { font-size: 0.65rem; color: var(--text-muted); text-align: center; margin-top: 12px; letter-spacing: 1px; opacity: 0.7; }
 
-        /* --- TOAST --- */
         .toast {
             position: fixed;
             bottom: 30px; left: 50%;
@@ -441,7 +401,7 @@
     <div class="header">
         <div class="brand-container">
             <div class="brand-line">MICROJOY UNIVERSAL</div>
-            <div class="ver-tag">SYSTEM v2.3 // ALIMIN</div>
+            <div class="ver-tag">SYSTEM v2.4 // ALIMIN</div>
         </div>
         <div class="header-controls">
             <select id="controllerType" class="btn-icon" aria-label="Controller Type">
@@ -462,8 +422,7 @@
                 <span>LIVE</span>
             </div>
 
-            <div class="ctl-svg-wrap" id="ctlSvgWrap">
-                </div>
+            <div class="ctl-svg-wrap" id="ctlSvgWrap"></div>
 
             <div class="axis-row">
                 <div class="axis-cell"><span>AXIS-X</span><span class="axis-val" id="psX">0.00</span></div>
@@ -524,231 +483,316 @@
         'use strict';
 
         // ====================================================================
-        // SVG CONTROLLER LAYOUTS — Highly detailed line art mimicking reference
+        // SVG CONTROLLER LAYOUTS — clean line-art, well-proportioned bodies.
+        // ALL three use viewBox 520x320 with consistent zoning:
+        //   • Top: shoulder bumpers
+        //   • Body curve: middle 50-280 vertically
+        //   • D-pad / left stick / face buttons / right stick: positioned
+        //     per profile to match real-world controller layouts.
         // ====================================================================
         const SVG_LAYOUTS = {
+            // -------- PS4 / DualShock 4 --------
+            // D-pad TL, touchpad center-top, face buttons TR, dual sticks
+            // bottom side-by-side, PS button between them.
             ps4: `
 <svg viewBox="0 0 520 320" xmlns="http://www.w3.org/2000/svg">
-  <path class="line-body" d="M 100 45 C 100 20 150 20 160 45 Z"/>
-  <path class="line-body" d="M 420 45 C 420 20 370 20 360 45 Z"/>
-  <path class="line-body" d="M 90 65 C 90 40 160 40 170 65 Z"/>
-  <path class="line-body" d="M 430 65 C 430 40 360 40 350 65 Z"/>
+
+  <!-- L1 / R1 shoulder bumpers (small tabs above body) -->
+  <path class="line-body" d="M 105 65 Q 95 50 130 50 L 175 50 Q 200 50 195 70 Z"/>
+  <path class="line-body" d="M 415 65 Q 425 50 390 50 L 345 50 Q 320 50 325 70 Z"/>
+  <text x="148" y="64" font-size="9" text-anchor="middle">L1</text>
+  <text x="372" y="64" font-size="9" text-anchor="middle">R1</text>
+
+  <!-- Lightbar slot on top edge -->
+  <line class="line-thin" x1="225" y1="76" x2="295" y2="76"/>
+  <rect x="227" y="78" width="66" height="3" rx="1" fill="var(--ps-light)" stroke="none">
+    <animate attributeName="opacity" values="1;0.3;1" dur="3s" repeatCount="indefinite"/>
+  </rect>
+
+  <!--
+    DualShock 4 body: two rounded grip lobes connected by a flatter middle
+    bridge. Top has a slight dip for the lightbar; bottom has W-curve.
+  -->
   <path class="line-body" d="
-    M 160,50 L 360,50
-    C 400,50 440,70 450,110
-    C 460,150 465,220 440,270
-    C 425,300 395,295 380,270
-    C 365,245 345,190 335,170
-    C 310,190 285,195 260,195
-    C 235,195 210,190 185,170
-    C 175,190 155,245 140,270
-    C 125,295 95,300 80,270
-    C 55,220 60,150 70,110
-    C 80,70 120,50 160,50 Z
-  "/>
-  <path class="line-thin" d="M 140,270 C 130,220 150,190 185,170" opacity="0.4"/>
-  <path class="line-thin" d="M 380,270 C 390,220 370,190 335,170" opacity="0.4"/>
-  
-  <rect class="line-mid" x="180" y="55" width="160" height="90" rx="6" />
-  
-  <circle class="line-thin" cx="260" cy="180" r="6"/>
-  <g class="line-thin" opacity="0.4" transform="translate(0, 155)">
-    <circle cx="245" cy="0" r="1"/><circle cx="255" cy="0" r="1"/><circle cx="265" cy="0" r="1"/><circle cx="275" cy="0" r="1"/>
-    <circle cx="250" cy="5" r="1"/><circle cx="260" cy="5" r="1"/><circle cx="270" cy="5" r="1"/>
-    <circle cx="245" cy="10" r="1"/><circle cx="255" cy="10" r="1"/><circle cx="265" cy="10" r="1"/><circle cx="275" cy="10" r="1"/>
+    M 110 80
+    C 75 80, 45 100, 38 145
+    C 32 200, 55 252, 100 270
+    C 135 282, 170 268, 190 248
+    C 205 235, 220 230, 240 230
+    L 280 230
+    C 300 230, 315 235, 330 248
+    C 350 268, 385 282, 420 270
+    C 465 252, 488 200, 482 145
+    C 475 100, 445 80, 410 80
+    C 380 84, 350 96, 320 106
+    C 295 114, 270 118, 260 118
+    C 250 118, 225 114, 200 106
+    C 170 96, 140 84, 110 80
+    Z"/>
+
+  <!-- Touchpad : large rectangle top-center -->
+  <rect class="line-mid" x="200" y="115" width="120" height="55" rx="8"/>
+  <!-- Dot grid inside touchpad -->
+  <g fill="var(--text-muted)" stroke="none" opacity="0.35">
+    <circle cx="220" cy="130" r="0.8"/><circle cx="235" cy="130" r="0.8"/>
+    <circle cx="250" cy="130" r="0.8"/><circle cx="265" cy="130" r="0.8"/>
+    <circle cx="280" cy="130" r="0.8"/><circle cx="295" cy="130" r="0.8"/>
+    <circle cx="220" cy="142" r="0.8"/><circle cx="235" cy="142" r="0.8"/>
+    <circle cx="250" cy="142" r="0.8"/><circle cx="265" cy="142" r="0.8"/>
+    <circle cx="280" cy="142" r="0.8"/><circle cx="295" cy="142" r="0.8"/>
+    <circle cx="220" cy="155" r="0.8"/><circle cx="235" cy="155" r="0.8"/>
+    <circle cx="250" cy="155" r="0.8"/><circle cx="265" cy="155" r="0.8"/>
+    <circle cx="280" cy="155" r="0.8"/><circle cx="295" cy="155" r="0.8"/>
   </g>
 
-  <path class="line-thin" d="M 168 65 L 175 65 L 178 80 L 171 80 Z"/>
-  <path class="line-thin" d="M 352 65 L 345 65 L 342 80 L 349 80 Z"/>
+  <!-- SHARE / OPTIONS small angled tabs flanking touchpad -->
+  <path class="line-thin" d="M 178 122 L 185 122 L 188 132 L 185 138 L 178 138 Z"/>
+  <path class="line-thin" d="M 342 122 L 335 122 L 332 132 L 335 138 L 342 138 Z"/>
 
-  <g transform="translate(130, 115)">
-    <circle class="line-thin" cx="0" cy="0" r="38" opacity="0.4"/>
-    <path class="line-body" d="M -8 -12 L -10 -30 C -6 -34 6 -34 10 -30 L 8 -12 Z" />
-    <path class="line-body" d="M -8  12 L -10  30 C -6  34 6  34 10  30 L 8  12 Z" />
-    <path class="line-body" d="M -12 -8 L -30 -10 C -34 -6 -34  6 -30  10 L -12  8 Z" />
-    <path class="line-body" d="M  12 -8 L  30 -10 C  34 -6  34  6  30  10 L  12  8 Z" />
-    <polygon id="svgDpadUp"    class="pad-dpad-arrow" points="0,-25 -6,-17 6,-17"/>
-    <polygon id="svgDpadDown"  class="pad-dpad-arrow" points="0, 25 -6, 17 6, 17"/>
-    <polygon id="svgDpadLeft"  class="pad-dpad-arrow" points="-25,0 -17,-6 -17,6"/>
-    <polygon id="svgDpadRight" class="pad-dpad-arrow" points=" 25,0  17,-6  17,6"/>
+  <!-- D-PAD : top-left, plus-cross outline -->
+  <g transform="translate(135, 142)">
+    <path class="line-mid" d="
+      M -10 -25 L 10 -25 L 10 -10 L 25 -10 L 25 10 L 10 10 L 10 25 L -10 25 L -10 10 L -25 10 L -25 -10 L -10 -10 Z"/>
+    <polygon id="svgDpadUp"    class="pad-dpad-arrow" points="0,-19 -5,-12 5,-12"/>
+    <polygon id="svgDpadDown"  class="pad-dpad-arrow" points="0, 19 -5, 12 5, 12"/>
+    <polygon id="svgDpadLeft"  class="pad-dpad-arrow" points="-19,0 -12,-5 -12,5"/>
+    <polygon id="svgDpadRight" class="pad-dpad-arrow" points=" 19,0  12,-5  12,5"/>
   </g>
 
-  <g transform="translate(390, 115)">
-    <circle class="line-thin" cx="0" cy="0" r="38" opacity="0.4" />
+  <!-- FACE BUTTONS : top-right diamond -->
+  <g transform="translate(385, 142)">
     <g id="svgBtn3" class="pad-btn btn-triangle">
-      <circle class="btn-outline" cx="0" cy="-24" r="11" stroke="var(--text-main)" fill="none"/>
-      <polygon class="btn-glyph" points="0,-29 -5,-20 5,-20" stroke="var(--text-main)" fill="none"/>
+      <circle class="btn-outline" cx="0" cy="-26" r="14" stroke="var(--text-main)" fill="none"/>
+      <polygon class="btn-glyph" points="0,-32 -6,-21 6,-21" stroke="var(--text-main)" fill="none"/>
     </g>
     <g id="svgBtn1" class="pad-btn btn-circle">
-      <circle class="btn-outline" cx="24" cy="0" r="11" stroke="var(--text-main)" fill="none"/>
-      <circle class="btn-glyph" cx="24" cy="0" r="5" stroke="var(--text-main)" fill="none"/>
+      <circle class="btn-outline" cx="26" cy="0" r="14" stroke="var(--text-main)" fill="none"/>
+      <circle class="btn-glyph" cx="26" cy="0" r="6" stroke="var(--text-main)" fill="none"/>
     </g>
     <g id="svgBtn0" class="pad-btn btn-cross">
-      <circle class="btn-outline" cx="0" cy="24" r="11" stroke="var(--text-main)" fill="none"/>
+      <circle class="btn-outline" cx="0" cy="26" r="14" stroke="var(--text-main)" fill="none"/>
       <g class="btn-glyph" stroke="var(--text-main)" fill="none">
-        <line x1="-4" y1="20" x2="4" y2="28"/><line x1="4" y1="20" x2="-4" y2="28"/>
+        <line x1="-5" y1="21" x2="5"  y2="31"/>
+        <line x1="5"  y1="21" x2="-5" y2="31"/>
       </g>
     </g>
     <g id="svgBtn2" class="pad-btn btn-square">
-      <circle class="btn-outline" cx="-24" cy="0" r="11" stroke="var(--text-main)" fill="none"/>
-      <rect class="btn-glyph" x="-29" y="-5" width="10" height="10" stroke="var(--text-main)" fill="none"/>
+      <circle class="btn-outline" cx="-26" cy="0" r="14" stroke="var(--text-main)" fill="none"/>
+      <rect class="btn-glyph" x="-32" y="-6" width="12" height="12" stroke="var(--text-main)" fill="none"/>
     </g>
   </g>
 
-  <g id="svgStick" class="pad-stick" transform="translate(170, 205)">
-    <circle class="line-body" cx="0" cy="0" r="28"/>
+  <!-- LEFT STICK (DYNAMIC) : bottom-left within left lobe -->
+  <g id="svgStick" class="pad-stick" transform="translate(195, 215)">
+    <circle class="line-mid" cx="0" cy="0" r="26"/>
     <circle class="line-mid" cx="0" cy="0" r="22" stroke-dasharray="2 3"/>
     <circle class="line-thin" cx="0" cy="0" r="13"/>
   </g>
 
-  <g transform="translate(350, 205)">
-    <circle class="line-body" cx="0" cy="0" r="28"/>
-    <circle class="line-mid" cx="0" cy="0" r="22" stroke-dasharray="2 3"/>
-    <circle class="line-thin" cx="0" cy="0" r="13"/>
+  <!-- RIGHT STICK (decorative) : bottom-right within right lobe -->
+  <g transform="translate(325, 215)">
+    <circle class="line-mid" cx="0" cy="0" r="26" opacity="0.5"/>
+    <circle class="line-mid" cx="0" cy="0" r="22" stroke-dasharray="2 3" opacity="0.5"/>
+    <circle class="line-thin" cx="0" cy="0" r="13" opacity="0.5"/>
   </g>
+
+  <!-- PS Home button between sticks -->
+  <circle class="line-thin" cx="260" cy="215" r="6"/>
+  <text x="260" y="218" font-size="7" text-anchor="middle" fill="var(--ps-light)">
+    PS
+    <animate attributeName="opacity" values="1;0.4;1" dur="2.5s" repeatCount="indefinite"/>
+  </text>
 </svg>`,
 
+            // -------- Xbox --------
+            // Stick L top-left (HIGH), face buttons TR, D-pad below stick L,
+            // stick R bottom-right (LOWER than stick L). Guide center-top.
             xbox: `
 <svg viewBox="0 0 520 320" xmlns="http://www.w3.org/2000/svg">
-  <path class="line-body" d="M 80 50 C 80 15 140 15 150 50 Z"/>
-  <path class="line-body" d="M 440 50 C 440 15 380 15 370 50 Z"/>
-  <path class="line-body" d="M 70 75 C 70 45 180 40 190 75 Z"/>
-  <path class="line-body" d="M 450 75 C 450 45 340 40 330 75 Z"/>
+
+  <!-- LB / RB shoulder bumpers -->
+  <path class="line-body" d="M 90 65 Q 80 48 120 48 L 175 48 Q 200 48 195 70 Z"/>
+  <path class="line-body" d="M 430 65 Q 440 48 400 48 L 345 48 Q 320 48 325 70 Z"/>
+  <text x="143" y="62" font-size="9" text-anchor="middle">LB</text>
+  <text x="377" y="62" font-size="9" text-anchor="middle">RB</text>
+
+  <!--
+    Xbox body: wider, longer grip handles. Top edge gently arcs with a
+    small dip at the centre for the guide button.
+  -->
   <path class="line-body" d="
-    M 160 50
-    C 190 50 200 80 260 80
-    C 320 80 330 50 360 50
-    C 420 50 450 80 460 130
-    C 470 200 455 260 420 290
-    C 390 315 350 290 330 240
-    C 310 255 285 260 260 260
-    C 235 260 210 255 190 240
-    C 170 290 130 315 100 290
-    C 65 260 50 200 60 130
-    C 70 80 100 50 160 50 Z
-  "/>
-  <path class="line-thin" d="M 100,290 C 120,240 150,210 190,240" opacity="0.4"/>
-  <path class="line-thin" d="M 420,290 C 400,240 370,210 330,240" opacity="0.4"/>
-  
-  <path class="line-thin" d="M 180 80 Q 260 120 340 80 L 330 130 Q 260 150 190 130 Z" opacity="0.3"/>
-  <circle class="line-body" cx="260" cy="95" r="16"/>
-  <path class="line-mid" d="M 252 87 Q 260 95 268 87 M 252 103 Q 260 95 268 103" stroke="var(--xbox-light)"/>
-  
-  <circle class="line-body" cx="220" cy="140" r="6"/>
-  <circle class="line-body" cx="300" cy="140" r="6"/>
-  <rect class="line-body" x="254" y="145" width="12" height="16" rx="3"/>
+    M 110 88
+    C 70 86, 42 100, 35 150
+    C 28 200, 50 258, 90 290
+    C 120 312, 155 312, 185 295
+    C 205 282, 222 275, 240 275
+    L 280 275
+    C 298 275, 315 282, 335 295
+    C 365 312, 400 312, 430 290
+    C 470 258, 492 200, 485 150
+    C 478 100, 450 86, 410 88
+    C 380 95, 350 110, 320 120
+    C 300 128, 280 132, 260 132
+    C 240 132, 220 128, 200 120
+    C 170 110, 140 95, 110 88
+    Z"/>
 
-  <g id="svgStick" class="pad-stick" transform="translate(140, 120)">
-    <circle class="line-body" cx="0" cy="0" r="28"/>
-    <circle class="line-mid" cx="0" cy="0" r="22" stroke-dasharray="2 3"/>
-    <circle class="line-thin" cx="0" cy="0" r="13"/>
+  <!-- LEFT STICK (DYNAMIC) : top-left, HIGH position -->
+  <g id="svgStick" class="pad-stick" transform="translate(135, 175)">
+    <circle class="line-mid" cx="0" cy="0" r="30"/>
+    <circle class="line-mid" cx="0" cy="0" r="24" stroke-dasharray="2 3"/>
+    <circle class="line-thin" cx="0" cy="0" r="14"/>
   </g>
 
-  <g transform="translate(190, 210)">
-    <circle class="line-thin" cx="0" cy="0" r="32"/>
-    <path class="line-body" d="M -12 -12 L -12 -26 L 12 -26 L 12 -12 L 26 -12 L 26 12 L 12 12 L 12 26 L -12 26 L -12 12 L -26 12 L -26 -12 Z"/>
-    <line class="line-thin" x1="-12" y1="-12" x2="12" y2="12"/>
-    <line class="line-thin" x1="-12" y1="12" x2="12" y2="-12"/>
-    <polygon id="svgDpadUp"    class="pad-dpad-arrow" points="0,-22 -5,-16 5,-16"/>
-    <polygon id="svgDpadDown"  class="pad-dpad-arrow" points="0, 22 -5, 16 5, 16"/>
-    <polygon id="svgDpadLeft"  class="pad-dpad-arrow" points="-22,0 -16,-5 -16,5"/>
-    <polygon id="svgDpadRight" class="pad-dpad-arrow" points=" 22,0  16,-5  16,5"/>
+  <!-- D-PAD : bottom-left, BELOW left stick -->
+  <g transform="translate(205, 250)">
+    <circle class="line-mid" cx="0" cy="0" r="24"/>
+    <path class="line-mid" d="
+      M -7 -18 L 7 -18 L 7 -7 L 18 -7 L 18 7 L 7 7 L 7 18 L -7 18 L -7 7 L -18 7 L -18 -7 L -7 -7 Z"/>
+    <polygon id="svgDpadUp"    class="pad-dpad-arrow" points="0,-13 -4,-7 4,-7"/>
+    <polygon id="svgDpadDown"  class="pad-dpad-arrow" points="0, 13 -4, 7 4, 7"/>
+    <polygon id="svgDpadLeft"  class="pad-dpad-arrow" points="-13,0 -7,-4 -7,4"/>
+    <polygon id="svgDpadRight" class="pad-dpad-arrow" points=" 13,0  7,-4  7,4"/>
   </g>
 
-  <g transform="translate(380, 120)">
+  <!-- FACE BUTTONS Y/B/A/X : top-right diamond -->
+  <g transform="translate(385, 175)">
     <g id="svgBtn3" class="pad-btn btn-xbox-y">
-      <circle class="btn-outline" cx="0" cy="-26" r="12" stroke="var(--text-main)" fill="none"/>
-      <text class="btn-glyph" x="0" y="-21" text-anchor="middle" font-size="12" font-weight="bold" stroke="none" fill="var(--text-main)">Y</text>
+      <circle class="btn-outline" cx="0" cy="-28" r="14" stroke="var(--text-main)" fill="none"/>
+      <text class="btn-glyph" x="0" y="-23" text-anchor="middle" font-size="13" font-weight="bold" stroke="none" fill="var(--text-main)">Y</text>
     </g>
     <g id="svgBtn1" class="pad-btn btn-xbox-b">
-      <circle class="btn-outline" cx="26" cy="0" r="12" stroke="var(--text-main)" fill="none"/>
-      <text class="btn-glyph" x="26" y="5" text-anchor="middle" font-size="12" font-weight="bold" stroke="none" fill="var(--text-main)">B</text>
+      <circle class="btn-outline" cx="28" cy="0" r="14" stroke="var(--text-main)" fill="none"/>
+      <text class="btn-glyph" x="28" y="5" text-anchor="middle" font-size="13" font-weight="bold" stroke="none" fill="var(--text-main)">B</text>
     </g>
     <g id="svgBtn0" class="pad-btn btn-xbox-a">
-      <circle class="btn-outline" cx="0" cy="26" r="12" stroke="var(--text-main)" fill="none"/>
-      <text class="btn-glyph" x="0" y="31" text-anchor="middle" font-size="12" font-weight="bold" stroke="none" fill="var(--text-main)">A</text>
+      <circle class="btn-outline" cx="0" cy="28" r="14" stroke="var(--text-main)" fill="none"/>
+      <text class="btn-glyph" x="0" y="33" text-anchor="middle" font-size="13" font-weight="bold" stroke="none" fill="var(--text-main)">A</text>
     </g>
     <g id="svgBtn2" class="pad-btn btn-xbox-x">
-      <circle class="btn-outline" cx="-26" cy="0" r="12" stroke="var(--text-main)" fill="none"/>
-      <text class="btn-glyph" x="-26" y="5" text-anchor="middle" font-size="12" font-weight="bold" stroke="none" fill="var(--text-main)">X</text>
+      <circle class="btn-outline" cx="-28" cy="0" r="14" stroke="var(--text-main)" fill="none"/>
+      <text class="btn-glyph" x="-28" y="5" text-anchor="middle" font-size="13" font-weight="bold" stroke="none" fill="var(--text-main)">X</text>
     </g>
   </g>
 
-  <g transform="translate(330, 210)">
-    <circle class="line-body" cx="0" cy="0" r="28"/>
-    <circle class="line-mid" cx="0" cy="0" r="22" stroke-dasharray="2 3"/>
-    <circle class="line-thin" cx="0" cy="0" r="13"/>
+  <!-- RIGHT STICK : asymmetric, bottom-right -->
+  <g transform="translate(310, 250)">
+    <circle class="line-mid" cx="0" cy="0" r="30" opacity="0.5"/>
+    <circle class="line-mid" cx="0" cy="0" r="24" stroke-dasharray="2 3" opacity="0.5"/>
+    <circle class="line-thin" cx="0" cy="0" r="14" opacity="0.5"/>
   </g>
+
+  <!-- Xbox guide button : top-center -->
+  <circle class="line-mid" cx="260" cy="155" r="14"/>
+  <circle cx="260" cy="155" r="8" fill="none" stroke="var(--xbox-light)" stroke-width="1.4"/>
+  <path d="M 254 151 Q 260 147 266 151" fill="none" stroke="var(--xbox-light)" stroke-width="1.4"/>
+  <path d="M 254 159 Q 260 163 266 159" fill="none" stroke="var(--xbox-light)" stroke-width="1.4"/>
+  <circle cx="260" cy="155" r="14" fill="none" stroke="var(--xbox-light)" stroke-width="0.8" opacity="0.5">
+    <animate attributeName="r" values="14;19;14" dur="2.5s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.5;0;0.5" dur="2.5s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- View / Menu small dots flanking guide -->
+  <circle class="line-thin" cx="225" cy="183" r="4"/>
+  <circle class="line-thin" cx="295" cy="183" r="4"/>
 </svg>`,
 
+            // -------- Generic (Switch-Pro / 8BitDo style) --------
+            // D-pad TL, SELECT/HOME/START top-center, face buttons TR diamond,
+            // dual sticks bottom symmetric, home button between sticks.
             generic: `
 <svg viewBox="0 0 520 320" xmlns="http://www.w3.org/2000/svg">
-  <path class="line-body" d="M 80 50 C 80 15 140 15 150 50 Z"/>
-  <path class="line-body" d="M 440 50 C 440 15 380 15 370 50 Z"/>
-  <path class="line-body" d="M 70 65 C 70 40 180 40 190 65 Z"/>
-  <path class="line-body" d="M 450 65 C 450 40 340 40 330 65 Z"/>
+
+  <!-- L bumper + ZL trigger (left top) -->
+  <path class="line-body" d="M 105 65 Q 95 50 125 50 L 180 50 Q 200 50 195 70 Z"/>
+  <text x="148" y="64" font-size="8" text-anchor="middle">L</text>
+  <path class="line-thin" d="M 110 70 L 110 78 Q 115 80 175 80 L 180 70"/>
+  <text x="148" y="76" font-size="6" text-anchor="middle">ZL</text>
+
+  <!-- R bumper + ZR trigger (right top) -->
+  <path class="line-body" d="M 415 65 Q 425 50 395 50 L 340 50 Q 320 50 325 70 Z"/>
+  <text x="372" y="64" font-size="8" text-anchor="middle">R</text>
+  <path class="line-thin" d="M 410 70 L 410 78 Q 405 80 345 80 L 340 70"/>
+  <text x="372" y="76" font-size="6" text-anchor="middle">ZR</text>
+
+  <!--
+    Generic / Switch-Pro style body — slightly stubbier than DS4,
+    symmetrical, gently curved.
+  -->
   <path class="line-body" d="
-    M 150 50 L 370 50
-    C 420 50 445 70 455 110
-    C 465 160 465 210 440 260
-    C 420 300 380 290 360 250
-    C 350 230 340 210 335 200
-    C 310 210 285 215 260 215
-    C 235 215 210 210 185 200
-    C 180 210 170 230 160 250
-    C 140 290 100 300 80 260
-    C 55 210 55 160 65 110
-    C 75 70 100 50 150 50 Z
-  "/>
+    M 130 85
+    C 95 85, 70 100, 65 140
+    C 60 185, 80 235, 120 255
+    C 150 268, 180 255, 200 240
+    C 215 229, 230 225, 245 225
+    L 275 225
+    C 290 225, 305 229, 320 240
+    C 340 255, 370 268, 400 255
+    C 440 235, 460 185, 455 140
+    C 450 100, 425 85, 390 85
+    C 365 90, 340 100, 320 107
+    C 300 113, 280 117, 260 117
+    C 240 117, 220 113, 200 107
+    C 180 100, 155 90, 130 85
+    Z"/>
 
-  <text x="210" y="85" font-size="8" text-anchor="middle" opacity="0.6">SELECT</text>
-  <text x="260" y="85" font-size="8" text-anchor="middle" opacity="0.6">HOME</text>
-  <text x="310" y="85" font-size="8" text-anchor="middle" opacity="0.6">START</text>
-  
-  <circle class="line-body" cx="210" cy="100" r="6"/>
-  <circle class="line-body" cx="260" cy="100" r="6"/>
-  <circle class="line-body" cx="310" cy="100" r="6"/>
+  <!-- SELECT / HOME / START : 3 small buttons top-center -->
+  <circle class="line-thin" cx="225" cy="138" r="5"/>
+  <circle class="line-thin" cx="260" cy="138" r="5"/>
+  <circle class="line-thin" cx="295" cy="138" r="5"/>
+  <text x="225" y="125" font-size="6" text-anchor="middle" opacity="0.55">SEL</text>
+  <text x="260" y="125" font-size="6" text-anchor="middle" opacity="0.55">HOME</text>
+  <text x="295" y="125" font-size="6" text-anchor="middle" opacity="0.55">START</text>
 
-  <g transform="translate(130, 115)">
-    <circle class="line-thin" cx="0" cy="0" r="38" opacity="0.4"/>
-    <path class="line-body" d="M -10 -10 L -10 -26 C -5 -28 5 -28 10 -26 L 10 -10 L 26 -10 C 28 -5 28 5 26 10 L 10 10 L 10 26 C 5 28 -5 28 -10 26 L -10 10 L -26 10 C -28 5 -28 -5 -26 -10 Z"/>
-    <polygon id="svgDpadUp"    class="pad-dpad-arrow" points="0,-22 -5,-15 5,-15"/>
-    <polygon id="svgDpadDown"  class="pad-dpad-arrow" points="0, 22 -5, 15 5, 15"/>
-    <polygon id="svgDpadLeft"  class="pad-dpad-arrow" points="-22,0 -15,-5 -15,5"/>
-    <polygon id="svgDpadRight" class="pad-dpad-arrow" points=" 22,0  15,-5  15,5"/>
+  <!-- D-PAD : top-left, plus-cross -->
+  <g transform="translate(150, 148)">
+    <path class="line-mid" d="
+      M -8 -22 L 8 -22 L 8 -8 L 22 -8 L 22 8 L 8 8 L 8 22 L -8 22 L -8 8 L -22 8 L -22 -8 L -8 -8 Z"/>
+    <polygon id="svgDpadUp"    class="pad-dpad-arrow" points="0,-16 -4,-9 4,-9"/>
+    <polygon id="svgDpadDown"  class="pad-dpad-arrow" points="0, 16 -4, 9 4, 9"/>
+    <polygon id="svgDpadLeft"  class="pad-dpad-arrow" points="-16,0 -9,-4 -9,4"/>
+    <polygon id="svgDpadRight" class="pad-dpad-arrow" points=" 16,0  9,-4  9,4"/>
   </g>
 
-  <g transform="translate(390, 115)">
-    <circle class="line-thin" cx="0" cy="0" r="38" opacity="0.4" />
+  <!-- FACE BUTTONS Y/B/A/X : top-right diamond -->
+  <g transform="translate(370, 148)">
     <g id="svgBtn3" class="pad-btn btn-gen">
-      <circle class="btn-outline" cx="0" cy="-26" r="12" stroke="var(--text-main)" fill="none"/>
-      <text class="btn-glyph" x="0" y="-21" text-anchor="middle" font-size="12" font-weight="bold" stroke="none" fill="var(--text-main)">Y</text>
+      <circle class="btn-outline" cx="0" cy="-25" r="13" stroke="var(--text-main)" fill="none"/>
+      <text class="btn-glyph" x="0" y="-21" text-anchor="middle" font-size="11" font-weight="bold" stroke="none" fill="var(--text-main)">Y</text>
     </g>
     <g id="svgBtn1" class="pad-btn btn-gen">
-      <circle class="btn-outline" cx="26" cy="0" r="12" stroke="var(--text-main)" fill="none"/>
-      <text class="btn-glyph" x="26" y="5" text-anchor="middle" font-size="12" font-weight="bold" stroke="none" fill="var(--text-main)">B</text>
+      <circle class="btn-outline" cx="25" cy="0" r="13" stroke="var(--text-main)" fill="none"/>
+      <text class="btn-glyph" x="25" y="4" text-anchor="middle" font-size="11" font-weight="bold" stroke="none" fill="var(--text-main)">B</text>
     </g>
     <g id="svgBtn0" class="pad-btn btn-gen">
-      <circle class="btn-outline" cx="0" cy="26" r="12" stroke="var(--text-main)" fill="none"/>
-      <text class="btn-glyph" x="0" y="31" text-anchor="middle" font-size="12" font-weight="bold" stroke="none" fill="var(--text-main)">A</text>
+      <circle class="btn-outline" cx="0" cy="25" r="13" stroke="var(--text-main)" fill="none"/>
+      <text class="btn-glyph" x="0" y="29" text-anchor="middle" font-size="11" font-weight="bold" stroke="none" fill="var(--text-main)">A</text>
     </g>
     <g id="svgBtn2" class="pad-btn btn-gen">
-      <circle class="btn-outline" cx="-26" cy="0" r="12" stroke="var(--text-main)" fill="none"/>
-      <text class="btn-glyph" x="-26" y="5" text-anchor="middle" font-size="12" font-weight="bold" stroke="none" fill="var(--text-main)">X</text>
+      <circle class="btn-outline" cx="-25" cy="0" r="13" stroke="var(--text-main)" fill="none"/>
+      <text class="btn-glyph" x="-25" y="4" text-anchor="middle" font-size="11" font-weight="bold" stroke="none" fill="var(--text-main)">X</text>
     </g>
   </g>
 
-  <g id="svgStick" class="pad-stick" transform="translate(170, 205)">
-    <circle class="line-body" cx="0" cy="0" r="28"/>
-    <circle class="line-mid" cx="0" cy="0" r="22" stroke-dasharray="2 3"/>
-    <circle class="line-thin" cx="0" cy="0" r="13"/>
+  <!-- LEFT STICK (DYNAMIC) : bottom-left, symmetric -->
+  <g id="svgStick" class="pad-stick" transform="translate(195, 210)">
+    <circle class="line-mid" cx="0" cy="0" r="24"/>
+    <circle class="line-mid" cx="0" cy="0" r="20" stroke-dasharray="2 3"/>
+    <circle class="line-thin" cx="0" cy="0" r="12"/>
   </g>
 
-  <g transform="translate(350, 205)">
-    <circle class="line-body" cx="0" cy="0" r="28"/>
-    <circle class="line-mid" cx="0" cy="0" r="22" stroke-dasharray="2 3"/>
-    <circle class="line-thin" cx="0" cy="0" r="13"/>
+  <!-- RIGHT STICK : bottom-right, symmetric mirror of left -->
+  <g transform="translate(325, 210)">
+    <circle class="line-mid" cx="0" cy="0" r="24" opacity="0.5"/>
+    <circle class="line-mid" cx="0" cy="0" r="20" stroke-dasharray="2 3" opacity="0.5"/>
+    <circle class="line-thin" cx="0" cy="0" r="12" opacity="0.5"/>
   </g>
+
+  <!-- Home button between sticks -->
+  <rect class="line-thin" x="253" y="203" width="14" height="14" rx="2"/>
+  <path d="M 256 211 L 260 207 L 264 211 L 264 214 L 256 214 Z" fill="none" stroke="var(--gen-amber)" stroke-width="1.2">
+    <animate attributeName="opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite"/>
+  </path>
 </svg>`
         };
 
@@ -841,11 +885,11 @@
             svgDpadRight = document.getElementById('svgDpadRight');
         }
 
-        // PENTING: Penyelarasan titik koordinat analog baru untuk reka bentuk SVG line-art.
+        // MUST match transform="translate(X,Y)" on each #svgStick group above
         const STICK_ORIGINS = {
-            ps4:     { x: 170, y: 205 },
-            xbox:    { x: 140, y: 120 },
-            generic: { x: 170, y: 205 }
+            ps4:     { x: 195, y: 215 },
+            xbox:    { x: 135, y: 175 },
+            generic: { x: 195, y: 210 }
         };
         const STICK_RADIUS = 14;
 
@@ -861,11 +905,12 @@
             lblBtn2.textContent = profile.btn2;
             lblBtn3.textContent = profile.btn3;
 
-            // Reset stick visual to center
             updateStickVisual(0, 0);
 
+            // BUGFIX: was `if (!pads)` (always truthy because pads is array).
+            // Should be checking pads[0] for the first connected gamepad.
             const pads = navigator.getGamepads ? navigator.getGamepads() : [];
-            if (!pads) dsStatusEl.textContent = "AWAITING PAIR";
+            if (!pads[0]) dsStatusEl.textContent = "AWAITING PAIR";
         }
 
         controllerType.addEventListener('change', (e) => applyProfile(e.target.value));
@@ -882,7 +927,6 @@
             svgStick.setAttribute('transform', `translate(${origin.x + dx}, ${origin.y + dy})`);
         }
 
-        // Initial mount
         applyProfile('ps4');
 
         // ====================================================================
@@ -1031,10 +1075,12 @@
 
         btnCalibrate.addEventListener('click', () => {
             const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
-            const gp = gamepads;
+            // BUGFIX: was `gp = gamepads` (whole array). Need first pad.
+            const gp = gamepads[0];
             if (gp) {
-                offsetX = gp.axes;
-                offsetY = gp.axes;
+                // BUGFIX: was `gp.axes` (whole array). Need axes[0]/axes[1].
+                offsetX = gp.axes[0];
+                offsetY = gp.axes[1];
                 showToast('Joystick dikalibrasi — titik tengah baru ditetapkan', 'success');
             } else {
                 showToast('Sila sambungkan controller terlebih dahulu', 'error');
@@ -1058,7 +1104,6 @@
             outPsSquare.textContent = "OFF"; outPsTriangle.textContent = "OFF";
             [outPsX, outPsY].forEach(el => el.classList.remove('val-active'));
             [cellDpad, cellBtn0, cellBtn1, cellBtn2, cellBtn3].forEach(el => el.classList.remove('active'));
-            // Reset SVG visuals
             updateStickVisual(0, 0);
             [svgBtn0, svgBtn1, svgBtn2, svgBtn3].forEach(el => el && el.classList.remove('pressed'));
             [svgDpadUp, svgDpadDown, svgDpadLeft, svgDpadRight].forEach(el => el && el.classList.remove('pressed'));
@@ -1081,11 +1126,13 @@
 
         function pollGamepad() {
             const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
-            const gp = gamepads;
+            // BUGFIX: was `gp = gamepads` (entire array)
+            const gp = gamepads[0];
 
             if (gp) {
-                let ax = gp.axes - offsetX;
-                let ay = gp.axes - offsetY;
+                // BUGFIX: was `gp.axes - offsetX/Y` (subtracting array from number)
+                let ax = gp.axes[0] - offsetX;
+                let ay = gp.axes[1] - offsetY;
                 ax = Math.max(-1, Math.min(1, ax));
                 ay = Math.max(-1, Math.min(1, ay));
 
@@ -1097,17 +1144,16 @@
                     outPsX.classList.remove('val-active'); outPsY.classList.remove('val-active');
                 }
 
-                // Visual stick movement (uses raw axis, not deadzoned, so it feels responsive)
                 updateStickVisual(ax, ay);
 
                 if (Math.abs(ax) < GP_DEADZONE) ax = 0;
                 if (Math.abs(ay) < GP_DEADZONE) ay = 0;
 
-                // D-pad
-                const upPressed    = !!(gp.buttons && gp.buttons.pressed);
-                const downPressed  = !!(gp.buttons && gp.buttons.pressed);
-                const leftPressed  = !!(gp.buttons && gp.buttons.pressed);
-                const rightPressed = !!(gp.buttons && gp.buttons.pressed);
+                // BUGFIX: D-pad button indices were missing (12=Up, 13=Down, 14=Left, 15=Right)
+                const upPressed    = !!(gp.buttons[12] && gp.buttons[12].pressed);
+                const downPressed  = !!(gp.buttons[13] && gp.buttons[13].pressed);
+                const leftPressed  = !!(gp.buttons[14] && gp.buttons[14].pressed);
+                const rightPressed = !!(gp.buttons[15] && gp.buttons[15].pressed);
 
                 setSvgPressed(svgDpadUp,    upPressed);
                 setSvgPressed(svgDpadDown,  downPressed);
@@ -1115,6 +1161,7 @@
                 setSvgPressed(svgDpadRight, rightPressed);
 
                 let dpadActive = false; let dpX = 0; let dpY = 0;
+                // D-pad uses same convention as stick: Y-positive = up = forward
                 if (upPressed)    { dpY =  90; dpadActive = true; }
                 if (downPressed)  { dpY = -90; dpadActive = true; }
                 if (leftPressed)  { dpX = -90; dpadActive = true; }
@@ -1136,25 +1183,25 @@
                     lX = cX; lY = cY; lastSendTime = now;
                 }
 
-                // BUTTONS
-                if (gp.buttons && gp.buttons.pressed && !gpState.cross) {
+                // BUGFIX: face button indices were missing (0=A/Cross, 1=B/Circle, 2=X/Square, 3=Y/Triangle)
+                if (gp.buttons[0] && gp.buttons[0].pressed && !gpState.cross) {
                     gpState.cross = true; setStripState(cellBtn0, outPsCross, true); setSvgPressed(svgBtn0, true); send("A\n");
-                } else if (gp.buttons && !gp.buttons.pressed && gpState.cross) {
+                } else if (gp.buttons[0] && !gp.buttons[0].pressed && gpState.cross) {
                     gpState.cross = false; setStripState(cellBtn0, outPsCross, false); setSvgPressed(svgBtn0, false); send("a\n");
                 }
-                if (gp.buttons && gp.buttons.pressed && !gpState.circle) {
+                if (gp.buttons[1] && gp.buttons[1].pressed && !gpState.circle) {
                     gpState.circle = true; setStripState(cellBtn1, outPsCircle, true); setSvgPressed(svgBtn1, true); send("B\n");
-                } else if (gp.buttons && !gp.buttons.pressed && gpState.circle) {
+                } else if (gp.buttons[1] && !gp.buttons[1].pressed && gpState.circle) {
                     gpState.circle = false; setStripState(cellBtn1, outPsCircle, false); setSvgPressed(svgBtn1, false); send("b\n");
                 }
-                if (gp.buttons && gp.buttons.pressed && !gpState.square) {
+                if (gp.buttons[2] && gp.buttons[2].pressed && !gpState.square) {
                     gpState.square = true; setStripState(cellBtn2, outPsSquare, true); setSvgPressed(svgBtn2, true); send("C\n");
-                } else if (gp.buttons && !gp.buttons.pressed && gpState.square) {
+                } else if (gp.buttons[2] && !gp.buttons[2].pressed && gpState.square) {
                     gpState.square = false; setStripState(cellBtn2, outPsSquare, false); setSvgPressed(svgBtn2, false); send("c\n");
                 }
-                if (gp.buttons && gp.buttons.pressed && !gpState.triangle) {
+                if (gp.buttons[3] && gp.buttons[3].pressed && !gpState.triangle) {
                     gpState.triangle = true; setStripState(cellBtn3, outPsTriangle, true); setSvgPressed(svgBtn3, true); send("D\n");
-                } else if (gp.buttons && !gp.buttons.pressed && gpState.triangle) {
+                } else if (gp.buttons[3] && !gp.buttons[3].pressed && gpState.triangle) {
                     gpState.triangle = false; setStripState(cellBtn3, outPsTriangle, false); setSvgPressed(svgBtn3, false); send("d\n");
                 }
             }
