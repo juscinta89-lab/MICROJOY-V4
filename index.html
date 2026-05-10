@@ -3,68 +3,156 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>MICROJOY UNIVERSAL v2.1</title>
-    
+    <title>MICROJOY UNIVERSAL v2.3</title>
+
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0a0a0c">
+    <meta name="theme-color" content="#0a0a0c" id="metaThemeColor">
     <link rel="apple-touch-icon" href="icon.png">
-    
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
-        :root {
+        /* ============== DARK THEME (DEFAULT) ============== */
+        :root,
+        :root[data-theme="dark"] {
             --bg-color: #08080a;
+            --bg-grid: rgba(255, 255, 255, 0.02);
+            --bg-radial: rgba(255, 51, 51, 0.05);
             --panel-bg: rgba(18, 18, 22, 0.6);
             --panel-border: rgba(255, 255, 255, 0.08);
+            --header-bg: rgba(10, 10, 12, 0.8);
+            --row-bg: rgba(0, 0, 0, 0.2);
+            --tx-bg: rgba(0, 230, 204, 0.05);
+            --tx-border: rgba(0, 230, 204, 0.1);
+            --btn-bg: rgba(255, 255, 255, 0.03);
+            --btn-bg-hover: rgba(255, 255, 255, 0.08);
+            --select-bg: rgba(10, 10, 12, 0.8);
+            --select-option-bg: #08080a;
+
+            /* Controller body shades */
+            --pad-body: #1a1a1f;
+            --pad-body-2: #25252c;
+            --pad-edge: #0a0a0c;
+            --pad-stick: #15151a;
+            --pad-stick-rim: rgba(255, 255, 255, 0.15);
+            --pad-button-base: #2a2a32;
+            --pad-button-rim: rgba(255, 255, 255, 0.1);
+            --pad-shadow: rgba(0, 0, 0, 0.6);
+            --pad-highlight: rgba(255, 255, 255, 0.06);
+
             --theme-red: #ff3333;
             --theme-red-dim: #4a0f0f;
             --theme-red-glow: rgba(255, 51, 51, 0.5);
-            --danger: #ffaa00; 
             --text-main: #f0f0f0;
             --text-muted: #888899;
             --cyan-glow: #00e6cc;
+            --cyan-shadow: rgba(0, 255, 204, 0.3);
             --success: #00ff66;
+            --success-shadow: rgba(0, 255, 102, 0.4);
+
+            /* Brand colors per profile */
+            --ps-blue: #003791;
+            --ps-light: #0070d1;
+            --xbox-green: #107c10;
+            --xbox-light: #9bf00b;
+            --gen-amber: #ffaa00;
+
+            --shadow-panel: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            --shadow-card: 0 8px 25px rgba(0, 0, 0, 0.4);
+            --shadow-header: 0 4px 20px rgba(0, 0, 0, 0.5);
+            --brand-text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+            --toast-bg: rgba(20, 20, 25, 0.95);
         }
 
-        * { 
-            box-sizing: border-box; 
-            font-family: 'Share Tech Mono', 'Courier New', monospace; 
-            user-select: none; 
-            -webkit-user-select: none; 
+        /* ============== LIGHT THEME ============== */
+        :root[data-theme="light"] {
+            --bg-color: #f4f5f7;
+            --bg-grid: rgba(0, 0, 0, 0.04);
+            --bg-radial: rgba(255, 51, 51, 0.06);
+            --panel-bg: rgba(255, 255, 255, 0.75);
+            --panel-border: rgba(0, 0, 0, 0.1);
+            --header-bg: rgba(255, 255, 255, 0.85);
+            --row-bg: rgba(0, 0, 0, 0.04);
+            --tx-bg: rgba(0, 150, 130, 0.08);
+            --tx-border: rgba(0, 150, 130, 0.2);
+            --btn-bg: rgba(0, 0, 0, 0.04);
+            --btn-bg-hover: rgba(0, 0, 0, 0.08);
+            --select-bg: rgba(255, 255, 255, 0.9);
+            --select-option-bg: #ffffff;
+
+            /* Controller body — keep dark for contrast against light bg */
+            --pad-body: #2a2c33;
+            --pad-body-2: #3a3d45;
+            --pad-edge: #1a1c22;
+            --pad-stick: #1f2128;
+            --pad-stick-rim: rgba(255, 255, 255, 0.2);
+            --pad-button-base: #4a4d57;
+            --pad-button-rim: rgba(255, 255, 255, 0.15);
+            --pad-shadow: rgba(0, 0, 0, 0.25);
+            --pad-highlight: rgba(255, 255, 255, 0.1);
+
+            --theme-red: #d92020;
+            --theme-red-dim: #fde0e0;
+            --theme-red-glow: rgba(217, 32, 32, 0.35);
+            --text-main: #15171a;
+            --text-muted: #5a6270;
+            --cyan-glow: #00897b;
+            --cyan-shadow: rgba(0, 137, 123, 0.3);
+            --success: #16a34a;
+            --success-shadow: rgba(22, 163, 74, 0.35);
+
+            --ps-blue: #003791;
+            --ps-light: #0070d1;
+            --xbox-green: #107c10;
+            --xbox-light: #6fb800;
+            --gen-amber: #d97706;
+
+            --shadow-panel: 0 10px 30px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            --shadow-card: 0 8px 25px rgba(0, 0, 0, 0.06);
+            --shadow-header: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --brand-text-shadow: none;
+            --toast-bg: rgba(255, 255, 255, 0.97);
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Share Tech Mono', 'Courier New', monospace;
+            user-select: none;
+            -webkit-user-select: none;
         }
 
         html, body {
             margin: 0; padding: 0;
             width: 100%; height: 100dvh;
             background-color: var(--bg-color);
-            background-image: 
-                radial-gradient(circle at 50% 0%, rgba(255, 51, 51, 0.05) 0%, transparent 50%),
-                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-image:
+                radial-gradient(circle at 50% 0%, var(--bg-radial) 0%, transparent 50%),
+                linear-gradient(var(--bg-grid) 1px, transparent 1px),
+                linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px);
             background-size: 100% 100%, 30px 30px, 30px 30px;
             color: var(--text-main);
             overflow: hidden;
             display: flex; flex-direction: column;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         /* --- HEADER --- */
         .header {
-            padding: 15px 25px; 
-            background: rgba(10, 10, 12, 0.8);
+            padding: 15px 25px;
+            background: var(--header-bg);
             border-bottom: 1px solid var(--panel-border);
             display: flex; justify-content: space-between; align-items: center;
             z-index: 100;
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            box-shadow: var(--shadow-header);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
-        .brand-container {
-            display: flex; flex-direction: column;
-        }
-        .brand-line { 
-            font-weight: bold; color: var(--text-main); 
-            letter-spacing: 2px; font-size: 1.2rem; 
-            text-shadow: 0 0 10px rgba(255,255,255,0.2);
+        .brand-container { display: flex; flex-direction: column; }
+        .brand-line {
+            font-weight: bold; color: var(--text-main);
+            letter-spacing: 2px; font-size: 1.2rem;
+            text-shadow: var(--brand-text-shadow);
             display: flex; align-items: center; gap: 8px;
         }
         .brand-line::before {
@@ -72,10 +160,8 @@
             border-radius: 50%; box-shadow: 0 0 8px var(--theme-red);
         }
         .ver-tag { color: var(--theme-red); font-size: 0.75rem; margin-top: 4px; letter-spacing: 3px; }
-        
-        .header-controls {
-            display: flex; gap: 10px; align-items: center;
-        }
+
+        .header-controls { display: flex; gap: 10px; align-items: center; }
 
         .btn-icon {
             background: transparent; border: 1px solid var(--panel-border);
@@ -83,129 +169,271 @@
             cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px;
             font-size: 0.9rem;
         }
-        .btn-icon:hover { background: rgba(255,255,255,0.05); color: var(--text-main); }
+        .btn-icon:hover { background: var(--btn-bg-hover); color: var(--text-main); }
         .btn-icon:active { transform: scale(0.95); }
 
-        /* Khusus untuk butang fullscreen agar ikon nampak seimbang di tengah */
-        #btnFullscreen {
+        #btnFullscreen, #btnTheme {
             padding: 8px 12px;
             font-size: 1.2rem;
             justify-content: center;
+            min-width: 42px;
         }
 
         select.btn-icon {
             appearance: none;
             -webkit-appearance: none;
-            background-color: rgba(10, 10, 12, 0.8);
+            background-color: var(--select-bg);
             outline: none;
         }
         select.btn-icon option {
-            background-color: #08080a;
+            background-color: var(--select-option-bg);
             color: var(--text-main);
         }
 
         /* --- MAIN DASHBOARD --- */
         .dashboard {
             flex: 1; display: flex; flex-direction: column;
-            align-items: center; padding: 25px; gap: 25px;
+            align-items: center; padding: 20px; gap: 20px;
             overflow-y: auto;
         }
 
-        /* --- TELEMETRY HUD --- */
-        .telemetry-panel {
-            width: 100%; max-width: 550px;
-            background: var(--panel-bg); 
+        /* --- CONTROLLER VISUAL PANEL --- */
+        .controller-panel {
+            width: 100%; max-width: 600px;
+            background: var(--panel-bg);
             border: 1px solid var(--panel-border);
-            border-radius: 16px; padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+            border-radius: 16px; padding: 20px;
+            box-shadow: var(--shadow-panel);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
         }
-        
-        .tel-header { 
-            color: var(--text-muted); font-size: 0.85rem; 
-            border-bottom: 1px solid var(--panel-border); padding-bottom: 10px; margin-bottom: 20px; 
-            text-transform: uppercase; letter-spacing: 2px; display: flex; justify-content: space-between;
+
+        .ctl-header {
+            color: var(--text-muted); font-size: 0.85rem;
+            border-bottom: 1px solid var(--panel-border); padding-bottom: 10px; margin-bottom: 15px;
+            text-transform: uppercase; letter-spacing: 2px;
+            display: flex; justify-content: space-between; align-items: center;
         }
 
-        .tel-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 12px 25px;
+        .ctl-svg-wrap {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+        /* ============= LINE-ART CONTROLLER STYLE ============= */
+        /* All controller SVGs use stroke-only line drawings, no fills.
+           This matches a technical blueprint aesthetic. */
+        .ctl-svg-wrap svg {
+            width: 100%;
+            max-width: 460px;
+            height: auto;
+            stroke: var(--text-main);
+            fill: none;
+            stroke-linejoin: round;
+            stroke-linecap: round;
+        }
+        /* Default outline weight */
+        .ctl-svg-wrap svg .line-body { stroke-width: 1.6; fill: none; }
+        .ctl-svg-wrap svg .line-mid  { stroke-width: 1.2; fill: none; }
+        .ctl-svg-wrap svg .line-thin { stroke-width: 0.8; fill: none; opacity: 0.7; }
+        .ctl-svg-wrap svg .line-fill { fill: var(--text-main); opacity: 0.04; stroke: none; }
+        .ctl-svg-wrap svg text {
+            stroke: none;
+            fill: var(--text-muted);
+            font-family: 'Share Tech Mono', monospace;
         }
 
-        .tel-row { 
-            display: flex; justify-content: space-between; align-items: center; 
-            font-size: 1.05rem; color: var(--text-muted); 
-            background: rgba(0,0,0,0.2); padding: 8px 12px; border-radius: 6px;
+        /* SVG element states - controlled via classes from JS */
+        .pad-btn { transition: all 0.15s ease-out; }
+        .pad-btn .btn-outline { stroke-width: 1.4; }
+        .pad-btn .btn-glyph   { stroke-width: 1.4; }
+        .pad-btn.pressed .btn-outline {
+            stroke: currentColor;
+            fill: currentColor;
+            fill-opacity: 0.15;
+            stroke-width: 2;
         }
-        .tel-value { color: var(--text-main); font-weight: bold; }
-        .val-active { color: var(--theme-red); text-shadow: 0 0 8px var(--theme-red-glow); }
-        
-        .tel-tx-row { 
-            background: rgba(0, 230, 204, 0.05); border: 1px solid rgba(0, 230, 204, 0.1);
-            padding: 15px; border-radius: 8px; margin-top: 15px; 
-            font-size: 1.2rem; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;
+        .pad-btn.pressed .btn-glyph {
+            stroke: currentColor;
+            fill: currentColor;
+            stroke-width: 2;
+            filter: drop-shadow(0 0 6px currentColor);
         }
-        .tel-tx-val { color: var(--cyan-glow); text-shadow: 0 0 12px rgba(0,255,204,0.3); font-weight: bold; letter-spacing: 1px; }
+        .pad-stick { transition: transform 0.04s linear; transform-origin: center; }
+        .pad-dpad-arrow {
+            transition: all 0.15s ease-out;
+            stroke: var(--text-main);
+            stroke-width: 1.4;
+            fill: none;
+        }
+        .pad-dpad-arrow.pressed {
+            stroke: var(--cyan-glow);
+            fill: var(--cyan-glow);
+            fill-opacity: 0.4;
+            stroke-width: 2;
+            filter: drop-shadow(0 0 5px var(--cyan-glow));
+        }
+
+        /* Per-button accent colors (used when pressed via currentColor) */
+        .btn-cross    { color: #6dc2ff; }
+        .btn-circle   { color: #ff5f5f; }
+        .btn-square   { color: #ff7ee0; }
+        .btn-triangle { color: #5cf2c5; }
+        .btn-xbox-a   { color: #66cc33; }
+        .btn-xbox-b   { color: #e62929; }
+        .btn-xbox-x   { color: #2a8cf0; }
+        .btn-xbox-y   { color: #ffcc00; }
+        .btn-gen      { color: var(--gen-amber); }
+
+        /* Mini telemetry strip below controller */
+        .ctl-status-strip {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--panel-border);
+        }
+        .strip-cell {
+            background: var(--row-bg);
+            border-radius: 6px;
+            padding: 8px 6px;
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+        .strip-cell .strip-label {
+            display: block;
+            font-size: 0.6rem;
+            opacity: 0.6;
+            margin-bottom: 4px;
+        }
+        .strip-cell .strip-val {
+            color: var(--text-main);
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+        .strip-cell.active .strip-val {
+            color: var(--theme-red);
+            text-shadow: 0 0 8px var(--theme-red-glow);
+        }
+
+        /* Axis raw display */
+        .axis-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .axis-cell {
+            flex: 1;
+            background: var(--row-bg);
+            padding: 6px 12px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        .axis-cell .axis-val { color: var(--text-main); font-weight: bold; }
+        .axis-cell .axis-val.val-active { color: var(--theme-red); text-shadow: 0 0 8px var(--theme-red-glow); }
+
+        /* TX payload row */
+        .tel-tx-row {
+            background: var(--tx-bg); border: 1px solid var(--tx-border);
+            padding: 12px 15px; border-radius: 8px; margin-top: 12px;
+            font-size: 1rem; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;
+            letter-spacing: 1px;
+        }
+        .tel-tx-val { color: var(--cyan-glow); text-shadow: 0 0 12px var(--cyan-shadow); font-weight: bold; }
 
         /* --- STATUS CLUSTER --- */
-        .status-cluster {
-            display: flex; width: 100%; max-width: 550px; gap: 20px;
-        }
+        .status-cluster { display: flex; width: 100%; max-width: 600px; gap: 15px; }
 
         .status-card {
             flex: 1; background: var(--panel-bg);
             border: 1px solid var(--panel-border); border-radius: 16px;
-            padding: 25px 20px; display: flex; flex-direction: column;
+            padding: 18px 16px; display: flex; flex-direction: column;
             align-items: center; justify-content: space-between;
             transition: all 0.3s ease; position: relative; overflow: hidden;
             backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            box-shadow: var(--shadow-card);
         }
-        
         .status-card::before {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
             background: var(--text-muted); transition: all 0.4s ease; opacity: 0.3;
         }
-
-        .status-card.active { border-color: rgba(255, 51, 51, 0.3); }
+        .status-card.active { border-color: var(--theme-red-glow); }
         .status-card.active::before { background: var(--theme-red); opacity: 1; box-shadow: 0 0 15px var(--theme-red); }
-        .status-card.active-success { border-color: rgba(0, 255, 102, 0.3); }
+        .status-card.active-success { border-color: var(--success-shadow); }
         .status-card.active-success::before { background: var(--success); opacity: 1; box-shadow: 0 0 15px var(--success); }
-        
-        .card-title { font-size: 0.85rem; color: var(--text-muted); letter-spacing: 2px; margin-bottom: 15px; text-align: center; }
-        .card-indicator { 
-            font-size: 1.1rem; font-weight: bold; color: var(--text-muted); margin-bottom: 25px; text-align: center; 
+
+        .card-title { font-size: 0.8rem; color: var(--text-muted); letter-spacing: 2px; margin-bottom: 12px; text-align: center; }
+        .card-indicator {
+            font-size: 1rem; font-weight: bold; color: var(--text-muted); margin-bottom: 18px; text-align: center;
             letter-spacing: 1px; transition: color 0.3s;
         }
         .status-card.active .card-indicator { color: var(--theme-red); text-shadow: 0 0 10px var(--theme-red-glow); }
-        .status-card.active-success .card-indicator { color: var(--success); text-shadow: 0 0 10px rgba(0,255,102,0.4); }
+        .status-card.active-success .card-indicator { color: var(--success); text-shadow: 0 0 10px var(--success-shadow); }
 
         .btn-action {
-            width: 100%; background: rgba(255, 255, 255, 0.03);
+            width: 100%; background: var(--btn-bg);
             color: var(--text-main); border: 1px solid var(--panel-border);
-            padding: 14px 0; border-radius: 8px; font-size: 0.95rem;
+            padding: 12px 0; border-radius: 8px; font-size: 0.9rem;
             font-weight: bold; letter-spacing: 2px; cursor: pointer;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             text-transform: uppercase;
         }
-        .btn-action:hover { background: rgba(255, 255, 255, 0.08); transform: translateY(-2px); }
+        .btn-action:hover { background: var(--btn-bg-hover); transform: translateY(-2px); }
         .btn-action:active { transform: translateY(1px); }
-        
-        .btn-red { border-color: rgba(255,51,51,0.4); color: #ff6b6b; background: rgba(255,51,51,0.05); }
-        .btn-red:hover { background: rgba(255,51,51,0.15); box-shadow: 0 5px 15px rgba(255,51,51,0.2); color: #fff;}
+        .btn-red { border-color: var(--theme-red-glow); color: var(--theme-red); background: var(--theme-red-dim); }
+        .btn-red:hover { background: var(--theme-red); color: #fff; box-shadow: 0 5px 15px var(--theme-red-glow); }
 
-        .hint-text { font-size: 0.7rem; color: var(--text-muted); text-align: center; margin-top: 15px; letter-spacing: 1px; opacity: 0.7; }
+        .hint-text { font-size: 0.65rem; color: var(--text-muted); text-align: center; margin-top: 12px; letter-spacing: 1px; opacity: 0.7; }
+
+        /* --- TOAST --- */
+        .toast {
+            position: fixed;
+            bottom: 30px; left: 50%;
+            transform: translateX(-50%) translateY(120%);
+            background: var(--toast-bg);
+            color: var(--text-main);
+            border: 1px solid var(--panel-border);
+            padding: 14px 22px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: var(--shadow-panel);
+            z-index: 1000;
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s;
+            opacity: 0;
+            pointer-events: none;
+            max-width: 90vw;
+            text-align: center;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+        .toast.success { border-color: var(--success-shadow); color: var(--success); }
+        .toast.error   { border-color: var(--theme-red-glow); color: var(--theme-red); }
 
         @keyframes pulse {
-            0% { opacity: 1; }
+            0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
-            100% { opacity: 1; }
         }
         .anim-pulse { animation: pulse 2s infinite; }
 
-        @media (orientation: landscape) {
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .ctl-svg-wrap svg { animation: fadeIn 0.35s ease-out; }
+
+        @media (orientation: landscape) and (min-height: 400px) {
             .dashboard { flex-direction: row; justify-content: center; align-items: stretch; }
-            .telemetry-panel { flex: 1.5; margin-bottom: 0; }
+            .controller-panel { flex: 1.6; margin-bottom: 0; }
             .status-cluster { flex: 1; flex-direction: column; }
         }
     </style>
@@ -215,34 +443,61 @@
     <div class="header">
         <div class="brand-container">
             <div class="brand-line">MICROJOY UNIVERSAL</div>
-            <div class="ver-tag">SYSTEM v2.1 // ALIMIN</div>
+            <div class="ver-tag">SYSTEM v2.3 // ALIMIN</div>
         </div>
         <div class="header-controls">
-            <select id="controllerType" class="btn-icon">
+            <select id="controllerType" class="btn-icon" aria-label="Controller Type">
                 <option value="ps4">🎮 PS4/DSense</option>
                 <option value="xbox">🎮 Xbox</option>
                 <option value="generic">🎮 Generic</option>
             </select>
-            <button class="btn-icon" id="btnFullscreen" aria-label="Fullscreen">⛶</button>
+            <button class="btn-icon" id="btnTheme" aria-label="Toggle Theme" title="Toggle Light/Dark">🌙</button>
+            <button class="btn-icon" id="btnFullscreen" aria-label="Fullscreen" title="Toggle Fullscreen">⛶</button>
         </div>
     </div>
 
     <div class="dashboard">
-        
-        <div class="telemetry-panel">
-            <div class="tel-header"><span>Controller Raw Input</span> <span>DATA LINK</span></div>
-            
-            <div class="tel-grid">
-                <div class="tel-row"><span>AXIS-X:</span><span class="tel-value" id="psX">0.00</span></div>
-                <div class="tel-row"><span>AXIS-Y:</span><span class="tel-value" id="psY">0.00</span></div>
-                <div class="tel-row"><span>D-PAD:</span><span class="tel-value" id="psDpad">IDLE</span></div>
-                <div class="tel-row"><span id="lblBtn0">[✕] A:</span><span class="tel-value" id="psCross">OFF</span></div>
-                <div class="tel-row"><span id="lblBtn1">[◯] B:</span><span class="tel-value" id="psCircle">OFF</span></div>
-                <div class="tel-row"><span id="lblBtn2">[□] C:</span><span class="tel-value" id="psSquare">OFF</span></div>
-                <div class="tel-row" style="grid-column: 1 / span 2;"><span id="lblBtn3">[△] D:</span><span class="tel-value" id="psTriangle">OFF</span></div>
+
+        <div class="controller-panel">
+            <div class="ctl-header">
+                <span id="ctlHeaderTitle">PLAYSTATION CONTROLLER</span>
+                <span>LIVE</span>
             </div>
 
-            <div class="tel-header" style="margin-top: 30px;">Micro:bit Payload</div>
+            <div class="ctl-svg-wrap" id="ctlSvgWrap">
+                <!-- SVG injected by JS -->
+            </div>
+
+            <div class="axis-row">
+                <div class="axis-cell"><span>AXIS-X</span><span class="axis-val" id="psX">0.00</span></div>
+                <div class="axis-cell"><span>AXIS-Y</span><span class="axis-val" id="psY">0.00</span></div>
+            </div>
+
+            <div class="ctl-status-strip">
+                <div class="strip-cell" id="cellDpad">
+                    <span class="strip-label">D-PAD</span>
+                    <span class="strip-val" id="psDpad">IDLE</span>
+                </div>
+                <div class="strip-cell" id="cellBtn0">
+                    <span class="strip-label" id="lblBtn0">A</span>
+                    <span class="strip-val" id="psCross">OFF</span>
+                </div>
+                <div class="strip-cell" id="cellBtn1">
+                    <span class="strip-label" id="lblBtn1">B</span>
+                    <span class="strip-val" id="psCircle">OFF</span>
+                </div>
+                <div class="strip-cell" id="cellBtn2">
+                    <span class="strip-label" id="lblBtn2">C</span>
+                    <span class="strip-val" id="psSquare">OFF</span>
+                </div>
+            </div>
+            <div class="ctl-status-strip" style="grid-template-columns: 1fr; margin-top:8px; padding-top:8px;">
+                <div class="strip-cell" id="cellBtn3">
+                    <span class="strip-label" id="lblBtn3">D</span>
+                    <span class="strip-val" id="psTriangle">OFF</span>
+                </div>
+            </div>
+
             <div class="tel-tx-row">
                 <span>TX_OUT:</span><span class="tel-tx-val anim-pulse" id="telemetryOut">AWAITING</span>
             </div>
@@ -266,90 +521,558 @@
 
     </div>
 
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
     <script>
-        // --- PWA REGISTRATION ---
+        'use strict';
+
+        // ====================================================================
+        // SVG CONTROLLER LAYOUTS — one per profile
+        // Each layout exposes the same set of IDs so JS can drive states uniformly:
+        //   #svgStick, #svgBtn0, #svgBtn1, #svgBtn2, #svgBtn3,
+        //   #svgDpadUp, #svgDpadDown, #svgDpadLeft, #svgDpadRight
+        // ====================================================================
+        // ============================================================
+        // SVG layouts — viewBox 480x320, geometry calibrated so that
+        // body, d-pad, face buttons, sticks, and accents NEVER overlap.
+        //
+        // Reference layout zones (real controllers):
+        //   PS4    : DPad TL, FaceBtns TR, LStick BL, RStick BR, touchpad center-top
+        //   Xbox   : LStick TL, FaceBtns TR, DPad BL, RStick BR, guide center-top
+        //   Generic: LStick L (big), DPad TR, FaceBtns BR, display center-bottom
+        // ============================================================
+        const SVG_LAYOUTS = {
+            // ============================================================
+            // PS4 / DualShock 4 — line-art style
+            // Reference: dual rounded grip lobes, central touchpad,
+            // D-pad TL, face buttons TR (diamond), dual sticks bottom
+            // (sebaris bersilang), PS logo between sticks, SHARE/OPTIONS
+            // micro-tabs flanking the touchpad.
+            // ============================================================
+            ps4: `
+<svg viewBox="0 0 520 320" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- L1 / R1 shoulder bumpers (peek above body) -->
+  <path class="line-body" d="M 90 60 Q 80 50 110 50 L 175 50 Q 200 50 195 70 Q 175 70 165 75 Q 130 75 105 75 Q 90 75 90 60 Z"/>
+  <path class="line-body" d="M 430 60 Q 440 50 410 50 L 345 50 Q 320 50 325 70 Q 345 70 355 75 Q 390 75 415 75 Q 430 75 430 60 Z"/>
+  <text x="125" y="68" font-size="9" text-anchor="middle">L1</text>
+  <text x="395" y="68" font-size="9" text-anchor="middle">R1</text>
+
+  <!--
+    DualShock 4 body — two big rounded grip lobes connected by a flatter
+    middle bridge. Top has a slight dip for the lightbar.
+  -->
+  <path class="line-body" d="
+    M 110 80
+    C 75 78, 45 95, 38 140
+    C 32 195, 55 250, 100 270
+    C 135 285, 170 270, 190 250
+    C 205 235, 220 228, 240 228
+    L 280 228
+    C 300 228, 315 235, 330 250
+    C 350 270, 385 285, 420 270
+    C 465 250, 488 195, 482 140
+    C 475 95, 445 78, 410 80
+    C 380 84, 350 96, 320 106
+    C 295 114, 270 118, 260 118
+    C 250 118, 225 114, 200 106
+    C 170 96, 140 84, 110 80
+    Z"/>
+
+  <!-- Lightbar groove on top edge -->
+  <line class="line-thin" x1="220" y1="78" x2="300" y2="78"/>
+  <line class="line-thin" x1="222" y1="84" x2="298" y2="84"/>
+  <!-- Animated lightbar fill -->
+  <rect x="226" y="80" width="68" height="3" rx="1" fill="var(--ps-light)" stroke="none">
+    <animate attributeName="opacity" values="1;0.3;1" dur="3s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- Touchpad : large rectangle top-center -->
+  <rect class="line-mid" x="200" y="115" width="120" height="55" rx="8"/>
+  <!-- Dot pattern via small circles -->
+  <g class="line-thin" stroke="var(--text-muted)" opacity="0.4">
+    <circle cx="215" cy="130" r="0.8" fill="var(--text-muted)"/>
+    <circle cx="230" cy="130" r="0.8" fill="var(--text-muted)"/>
+    <circle cx="245" cy="130" r="0.8" fill="var(--text-muted)"/>
+    <circle cx="260" cy="130" r="0.8" fill="var(--text-muted)"/>
+    <circle cx="275" cy="130" r="0.8" fill="var(--text-muted)"/>
+    <circle cx="290" cy="130" r="0.8" fill="var(--text-muted)"/>
+    <circle cx="305" cy="130" r="0.8" fill="var(--text-muted)"/>
+    <circle cx="215" cy="145" r="0.8" fill="var(--text-muted)"/>
+    <circle cx="230" cy="145" r="0.8" fill="var(--text-muted)"/>
+    <circle cx="245" cy="145" r="0.8" fill="var(--text-muted)"/>
+    <circle cx="260" cy="145" r="0.8" fill="var(--text-muted)"/>
+    <circle cx="275" cy="145" r="0.8" fill="var(--text-muted)"/>
+    <circle cx="290" cy="145" r="0.8" fill="var(--text-muted)"/>
+    <circle cx="305" cy="145" r="0.8" fill="var(--text-muted)"/>
+    <circle cx="215" cy="160" r="0.8" fill="var(--text-muted)"/>
+    <circle cx="230" cy="160" r="0.8" fill="var(--text-muted)"/>
+    <circle cx="245" cy="160" r="0.8" fill="var(--text-muted)"/>
+    <circle cx="260" cy="160" r="0.8" fill="var(--text-muted)"/>
+    <circle cx="275" cy="160" r="0.8" fill="var(--text-muted)"/>
+    <circle cx="290" cy="160" r="0.8" fill="var(--text-muted)"/>
+    <circle cx="305" cy="160" r="0.8" fill="var(--text-muted)"/>
+  </g>
+
+  <!-- SHARE (left of touchpad) and OPTIONS (right) — small angled tabs -->
+  <path class="line-thin" d="M 178 122 L 185 122 L 188 132 L 185 138 L 178 138 Z"/>
+  <path class="line-thin" d="M 342 122 L 335 122 L 332 132 L 335 138 L 342 138 Z"/>
+
+  <!-- D-PAD : top-left circular base with cross arrows inside -->
+  <g transform="translate(135, 142)">
+    <circle class="line-mid" cx="0" cy="0" r="32"/>
+    <!-- Cross-shape outline -->
+    <path class="line-mid" d="
+      M -10 -25 L 10 -25 L 10 -10 L 25 -10 L 25 10 L 10 10 L 10 25 L -10 25 L -10 10 L -25 10 L -25 -10 L -10 -10 Z"/>
+    <!-- Arrows inside cross arms (light up when pressed) -->
+    <polygon id="svgDpadUp"    class="pad-dpad-arrow" points="0,-19 -5,-12 5,-12"/>
+    <polygon id="svgDpadDown"  class="pad-dpad-arrow" points="0, 19 -5, 12 5, 12"/>
+    <polygon id="svgDpadLeft"  class="pad-dpad-arrow" points="-19,0 -12,-5 -12,5"/>
+    <polygon id="svgDpadRight" class="pad-dpad-arrow" points=" 19,0  12,-5  12,5"/>
+  </g>
+
+  <!-- FACE BUTTONS : top-right diamond -->
+  <g transform="translate(385, 142)">
+    <!-- Triangle (top, green) -->
+    <g id="svgBtn3" class="pad-btn btn-triangle">
+      <circle class="btn-outline" cx="0" cy="-26" r="14" stroke="var(--text-main)" fill="none"/>
+      <polygon class="btn-glyph" points="0,-32 -6,-21 6,-21" stroke="var(--text-main)" fill="none"/>
+    </g>
+    <!-- Circle (right, red) -->
+    <g id="svgBtn1" class="pad-btn btn-circle">
+      <circle class="btn-outline" cx="26" cy="0" r="14" stroke="var(--text-main)" fill="none"/>
+      <circle class="btn-glyph" cx="26" cy="0" r="6" stroke="var(--text-main)" fill="none"/>
+    </g>
+    <!-- Cross (bottom, blue) -->
+    <g id="svgBtn0" class="pad-btn btn-cross">
+      <circle class="btn-outline" cx="0" cy="26" r="14" stroke="var(--text-main)" fill="none"/>
+      <g class="btn-glyph" stroke="var(--text-main)" fill="none">
+        <line x1="-5" y1="21" x2="5"  y2="31"/>
+        <line x1="5"  y1="21" x2="-5" y2="31"/>
+      </g>
+    </g>
+    <!-- Square (left, pink) -->
+    <g id="svgBtn2" class="pad-btn btn-square">
+      <circle class="btn-outline" cx="-26" cy="0" r="14" stroke="var(--text-main)" fill="none"/>
+      <rect class="btn-glyph" x="-32" y="-6" width="12" height="12" stroke="var(--text-main)" fill="none"/>
+    </g>
+  </g>
+
+  <!-- LEFT STICK (DYNAMIC) : bottom-left within left lobe -->
+  <g id="svgStick" class="pad-stick" transform="translate(195, 220)">
+    <circle class="line-mid" cx="0" cy="0" r="26"/>
+    <circle class="line-mid" cx="0" cy="0" r="22"/>
+    <circle class="line-thin" cx="0" cy="0" r="14"/>
+  </g>
+
+  <!-- RIGHT STICK (decorative) : bottom-right within right lobe -->
+  <g transform="translate(325, 220)">
+    <circle class="line-mid" cx="0" cy="0" r="26" opacity="0.5"/>
+    <circle class="line-mid" cx="0" cy="0" r="22" opacity="0.5"/>
+    <circle class="line-thin" cx="0" cy="0" r="14" opacity="0.5"/>
+  </g>
+
+  <!-- PS Home button between sticks -->
+  <circle class="line-thin" cx="260" cy="220" r="6"/>
+  <text x="260" y="223" font-size="7" text-anchor="middle" fill="var(--ps-light)" opacity="0.9">
+    PS
+    <animate attributeName="opacity" values="0.9;0.4;0.9" dur="2.5s" repeatCount="indefinite"/>
+  </text>
+</svg>`,
+
+            // ============================================================
+            // Xbox — line-art style
+            // Reference: WIDER body with elongated grip handles, asymmetric
+            // sticks (left HIGH, right LOW), D-pad below left stick,
+            // X/Y/A/B top-right diamond, Xbox guide button center-top,
+            // VIEW/MENU small buttons flanking guide.
+            // ============================================================
+            xbox: `
+<svg viewBox="0 0 520 320" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- LB / RB shoulder bumpers -->
+  <path class="line-body" d="M 80 60 Q 70 48 105 48 L 180 48 Q 205 48 200 70 Q 175 70 160 75 Q 120 75 95 75 Q 80 75 80 60 Z"/>
+  <path class="line-body" d="M 440 60 Q 450 48 415 48 L 340 48 Q 315 48 320 70 Q 345 70 360 75 Q 400 75 425 75 Q 440 75 440 60 Z"/>
+  <text x="135" y="68" font-size="9" text-anchor="middle">LB</text>
+  <text x="385" y="68" font-size="9" text-anchor="middle">RB</text>
+
+  <!--
+    Xbox body — wider, with elongated grip handles dropping further down
+    than DS4. Top edge gently dips at the centre (around the guide button).
+  -->
+  <path class="line-body" d="
+    M 110 88
+    C 70 86, 42 100, 35 150
+    C 28 200, 50 258, 90 290
+    C 120 312, 155 312, 185 295
+    C 205 282, 222 275, 240 275
+    L 280 275
+    C 298 275, 315 282, 335 295
+    C 365 312, 400 312, 430 290
+    C 470 258, 492 200, 485 150
+    C 478 100, 450 86, 410 88
+    C 380 95, 350 110, 320 120
+    C 300 128, 280 132, 260 132
+    C 240 132, 220 128, 200 120
+    C 170 110, 140 95, 110 88
+    Z"/>
+
+  <!-- Inner top contour line (subtle accent) -->
+  <path class="line-thin" d="M 130 110 Q 200 132 260 132 Q 320 132 390 110"/>
+
+  <!-- LEFT STICK (DYNAMIC) : top-left, HIGH position -->
+  <g id="svgStick" class="pad-stick" transform="translate(135, 175)">
+    <circle class="line-mid" cx="0" cy="0" r="30"/>
+    <circle class="line-mid" cx="0" cy="0" r="24"/>
+    <circle class="line-thin" cx="0" cy="0" r="14"/>
+  </g>
+
+  <!-- D-PAD : bottom-left, BELOW left stick — circular base with cross arrows -->
+  <g transform="translate(205, 250)">
+    <circle class="line-mid" cx="0" cy="0" r="24"/>
+    <!-- Plus / cross outline -->
+    <path class="line-mid" d="
+      M -7 -18 L 7 -18 L 7 -7 L 18 -7 L 18 7 L 7 7 L 7 18 L -7 18 L -7 7 L -18 7 L -18 -7 L -7 -7 Z"/>
+    <polygon id="svgDpadUp"    class="pad-dpad-arrow" points="0,-13 -4,-7 4,-7"/>
+    <polygon id="svgDpadDown"  class="pad-dpad-arrow" points="0, 13 -4, 7 4, 7"/>
+    <polygon id="svgDpadLeft"  class="pad-dpad-arrow" points="-13,0 -7,-4 -7,4"/>
+    <polygon id="svgDpadRight" class="pad-dpad-arrow" points=" 13,0  7,-4  7,4"/>
+  </g>
+
+  <!-- FACE BUTTONS Y/B/A/X : top-right diamond -->
+  <g transform="translate(385, 175)">
+    <!-- Y top yellow -->
+    <g id="svgBtn3" class="pad-btn btn-xbox-y">
+      <circle class="btn-outline" cx="0" cy="-28" r="14" stroke="var(--text-main)" fill="none"/>
+      <text class="btn-glyph" x="0" y="-23" text-anchor="middle" font-size="13" font-weight="bold" stroke="none" fill="var(--text-main)">Y</text>
+    </g>
+    <!-- B right red -->
+    <g id="svgBtn1" class="pad-btn btn-xbox-b">
+      <circle class="btn-outline" cx="28" cy="0" r="14" stroke="var(--text-main)" fill="none"/>
+      <text class="btn-glyph" x="28" y="5" text-anchor="middle" font-size="13" font-weight="bold" stroke="none" fill="var(--text-main)">B</text>
+    </g>
+    <!-- A bottom green -->
+    <g id="svgBtn0" class="pad-btn btn-xbox-a">
+      <circle class="btn-outline" cx="0" cy="28" r="14" stroke="var(--text-main)" fill="none"/>
+      <text class="btn-glyph" x="0" y="33" text-anchor="middle" font-size="13" font-weight="bold" stroke="none" fill="var(--text-main)">A</text>
+    </g>
+    <!-- X left blue -->
+    <g id="svgBtn2" class="pad-btn btn-xbox-x">
+      <circle class="btn-outline" cx="-28" cy="0" r="14" stroke="var(--text-main)" fill="none"/>
+      <text class="btn-glyph" x="-28" y="5" text-anchor="middle" font-size="13" font-weight="bold" stroke="none" fill="var(--text-main)">X</text>
+    </g>
+  </g>
+
+  <!-- RIGHT STICK : asymmetric, lower than left stick -->
+  <g transform="translate(310, 250)">
+    <circle class="line-mid" cx="0" cy="0" r="30" opacity="0.5"/>
+    <circle class="line-mid" cx="0" cy="0" r="24" opacity="0.5"/>
+    <circle class="line-thin" cx="0" cy="0" r="14" opacity="0.5"/>
+  </g>
+
+  <!-- Xbox guide button : center-top -->
+  <circle class="line-mid" cx="260" cy="155" r="14"/>
+  <!-- Stylized X logo -->
+  <circle cx="260" cy="155" r="8" fill="none" stroke="var(--xbox-light)" stroke-width="1.4"/>
+  <path d="M 254 151 Q 260 147 266 151" fill="none" stroke="var(--xbox-light)" stroke-width="1.4"/>
+  <path d="M 254 159 Q 260 163 266 159" fill="none" stroke="var(--xbox-light)" stroke-width="1.4"/>
+  <!-- Pulsing ring -->
+  <circle cx="260" cy="155" r="14" fill="none" stroke="var(--xbox-light)" stroke-width="0.8" opacity="0.4">
+    <animate attributeName="r" values="14;19;14" dur="2.5s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.4;0;0.4" dur="2.5s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- View / Menu small tabs flanking guide -->
+  <circle class="line-thin" cx="225" cy="183" r="4"/>
+  <circle class="line-thin" cx="295" cy="183" r="4"/>
+  <text x="225" y="200" font-size="6" text-anchor="middle" opacity="0.5">VIEW</text>
+  <text x="295" y="200" font-size="6" text-anchor="middle" opacity="0.5">MENU</text>
+</svg>`,
+
+            // ============================================================
+            // Generic — line-art style (Nintendo Switch Pro / 8BitDo style)
+            // From reference: SELECT/HOME/START labels top-center, D-pad
+            // top-left (cross arrows), X/Y/A/B top-right diamond, dual
+            // sticks BOTTOM (symmetric), small Home button between sticks,
+            // L/R bumpers + ZL/ZR triggers visible on top edge.
+            // ============================================================
+            generic: `
+<svg viewBox="0 0 520 320" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- L bumper + ZL trigger (left top) -->
+  <path class="line-body" d="M 95 50 Q 85 38 120 38 L 175 38 Q 195 38 192 58 L 95 58 Q 85 58 95 50 Z"/>
+  <text x="143" y="51" font-size="8" text-anchor="middle">L</text>
+  <path class="line-thin" d="M 105 60 L 105 72 Q 110 76 175 76 L 180 60"/>
+  <text x="143" y="72" font-size="7" text-anchor="middle">ZL</text>
+
+  <!-- R bumper + ZR trigger (right top) -->
+  <path class="line-body" d="M 425 50 Q 435 38 400 38 L 345 38 Q 325 38 328 58 L 425 58 Q 435 58 425 50 Z"/>
+  <text x="377" y="51" font-size="8" text-anchor="middle">R</text>
+  <path class="line-thin" d="M 415 60 L 415 72 Q 410 76 345 76 L 340 60"/>
+  <text x="377" y="72" font-size="7" text-anchor="middle">ZR</text>
+
+  <!--
+    Generic / Switch-Pro style body — rounder than Xbox, smaller grip
+    handles than DS4. Symmetrical, gently curved, slightly stubbier.
+  -->
+  <path class="line-body" d="
+    M 130 80
+    C 95 80, 70 95, 65 135
+    C 60 180, 80 230, 120 250
+    C 150 263, 180 250, 200 235
+    C 215 224, 230 220, 245 220
+    L 275 220
+    C 290 220, 305 224, 320 235
+    C 340 250, 370 263, 400 250
+    C 440 230, 460 180, 455 135
+    C 450 95, 425 80, 390 80
+    C 365 85, 340 95, 320 102
+    C 300 108, 280 112, 260 112
+    C 240 112, 220 108, 200 102
+    C 180 95, 155 85, 130 80
+    Z"/>
+
+  <!-- Inner top contour -->
+  <path class="line-thin" d="M 145 100 Q 200 118 260 118 Q 320 118 375 100"/>
+
+  <!-- SELECT / HOME / START : 3 small buttons top-center -->
+  <circle class="line-thin" cx="225" cy="135" r="5"/>
+  <circle class="line-thin" cx="260" cy="135" r="5"/>
+  <circle class="line-thin" cx="295" cy="135" r="5"/>
+  <text x="225" y="120" font-size="6" text-anchor="middle" opacity="0.55">SEL</text>
+  <text x="260" y="120" font-size="6" text-anchor="middle" opacity="0.55">HOME</text>
+  <text x="295" y="120" font-size="6" text-anchor="middle" opacity="0.55">START</text>
+
+  <!-- D-PAD : top-left, plus/cross shape -->
+  <g transform="translate(150, 145)">
+    <!-- Plus outline -->
+    <path class="line-mid" d="
+      M -8 -22 L 8 -22 L 8 -8 L 22 -8 L 22 8 L 8 8 L 8 22 L -8 22 L -8 8 L -22 8 L -22 -8 L -8 -8 Z"/>
+    <polygon id="svgDpadUp"    class="pad-dpad-arrow" points="0,-16 -4,-9 4,-9"/>
+    <polygon id="svgDpadDown"  class="pad-dpad-arrow" points="0, 16 -4, 9 4, 9"/>
+    <polygon id="svgDpadLeft"  class="pad-dpad-arrow" points="-16,0 -9,-4 -9,4"/>
+    <polygon id="svgDpadRight" class="pad-dpad-arrow" points=" 16,0  9,-4  9,4"/>
+  </g>
+
+  <!-- FACE BUTTONS Y/B/A/X : top-right diamond (Switch Pro layout) -->
+  <g transform="translate(370, 145)">
+    <g id="svgBtn3" class="pad-btn btn-gen">
+      <circle class="btn-outline" cx="0" cy="-25" r="13" stroke="var(--text-main)" fill="none"/>
+      <text class="btn-glyph" x="0" y="-21" text-anchor="middle" font-size="11" font-weight="bold" stroke="none" fill="var(--text-main)">Y</text>
+    </g>
+    <g id="svgBtn1" class="pad-btn btn-gen">
+      <circle class="btn-outline" cx="25" cy="0" r="13" stroke="var(--text-main)" fill="none"/>
+      <text class="btn-glyph" x="25" y="4" text-anchor="middle" font-size="11" font-weight="bold" stroke="none" fill="var(--text-main)">B</text>
+    </g>
+    <g id="svgBtn0" class="pad-btn btn-gen">
+      <circle class="btn-outline" cx="0" cy="25" r="13" stroke="var(--text-main)" fill="none"/>
+      <text class="btn-glyph" x="0" y="29" text-anchor="middle" font-size="11" font-weight="bold" stroke="none" fill="var(--text-main)">A</text>
+    </g>
+    <g id="svgBtn2" class="pad-btn btn-gen">
+      <circle class="btn-outline" cx="-25" cy="0" r="13" stroke="var(--text-main)" fill="none"/>
+      <text class="btn-glyph" x="-25" y="4" text-anchor="middle" font-size="11" font-weight="bold" stroke="none" fill="var(--text-main)">X</text>
+    </g>
+  </g>
+
+  <!-- LEFT STICK (DYNAMIC) : bottom-left, symmetric -->
+  <g id="svgStick" class="pad-stick" transform="translate(195, 200)">
+    <circle class="line-mid" cx="0" cy="0" r="24"/>
+    <circle class="line-mid" cx="0" cy="0" r="20"/>
+    <circle class="line-thin" cx="0" cy="0" r="12"/>
+  </g>
+
+  <!-- RIGHT STICK : bottom-right, symmetric mirror of left -->
+  <g transform="translate(325, 200)">
+    <circle class="line-mid" cx="0" cy="0" r="24" opacity="0.5"/>
+    <circle class="line-mid" cx="0" cy="0" r="20" opacity="0.5"/>
+    <circle class="line-thin" cx="0" cy="0" r="12" opacity="0.5"/>
+  </g>
+
+  <!-- Home/center button between sticks -->
+  <g transform="translate(260, 200)">
+    <rect class="line-thin" x="-7" y="-7" width="14" height="14" rx="2"/>
+    <!-- Tiny house icon -->
+    <path class="line-thin" d="M -4 1 L 0 -3 L 4 1 L 4 4 L -4 4 Z" stroke="var(--gen-amber)" opacity="0.8">
+      <animate attributeName="opacity" values="0.8;0.3;0.8" dur="2s" repeatCount="indefinite"/>
+    </path>
+  </g>
+</svg>`
+        };
+
+        // ====================================================================
+        // PWA REGISTRATION
+        // ====================================================================
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
+            window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
         }
 
-        // --- UI & CONTROLLER TYPE SELECTION ---
+        // ====================================================================
+        // TOAST
+        // ====================================================================
+        const toastEl = document.getElementById('toast');
+        let toastTimer = null;
+        function showToast(msg, type = 'info', duration = 2400) {
+            toastEl.textContent = msg;
+            toastEl.className = 'toast show' + (type !== 'info' ? ' ' + type : '');
+            if (toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toastEl.classList.remove('show'), duration);
+        }
+
+        // ====================================================================
+        // THEME
+        // ====================================================================
+        const btnTheme = document.getElementById('btnTheme');
+        const metaThemeColor = document.getElementById('metaThemeColor');
+        const THEME_KEY = 'microjoy-theme';
+
+        function applyTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            btnTheme.textContent = theme === 'dark' ? '🌙' : '☀️';
+            btnTheme.title = theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode';
+            metaThemeColor.setAttribute('content', theme === 'dark' ? '#0a0a0c' : '#f4f5f7');
+            try { localStorage.setItem(THEME_KEY, theme); } catch (e) {}
+        }
+        (function initTheme() {
+            let saved = null;
+            try { saved = localStorage.getItem(THEME_KEY); } catch (e) {}
+            if (saved === 'light' || saved === 'dark') applyTheme(saved);
+            else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) applyTheme('light');
+            else applyTheme('dark');
+        })();
+        btnTheme.addEventListener('click', () => {
+            const c = document.documentElement.getAttribute('data-theme');
+            applyTheme(c === 'dark' ? 'light' : 'dark');
+        });
+
+        // ====================================================================
+        // CONTROLLER PROFILE & SVG SWAPPING
+        // ====================================================================
         const controllerType = document.getElementById('controllerType');
         const lblBtn0 = document.getElementById('lblBtn0');
         const lblBtn1 = document.getElementById('lblBtn1');
         const lblBtn2 = document.getElementById('lblBtn2');
         const lblBtn3 = document.getElementById('lblBtn3');
         const controllerTitle = document.getElementById('controllerTitle');
+        const ctlHeaderTitle = document.getElementById('ctlHeaderTitle');
         const dsStatusEl = document.getElementById('dsStatus');
+        const ctlSvgWrap = document.getElementById('ctlSvgWrap');
 
         const controllerProfiles = {
             ps4: {
                 title: "PLAYSTATION CONTROLLER",
-                btn0: "[✕] A:", btn1: "[◯] B:", btn2: "[□] C:", btn3: "[△] D:"
+                btn0: "✕ CROSS", btn1: "◯ CIRCLE", btn2: "□ SQUARE", btn3: "△ TRIANGLE"
             },
             xbox: {
                 title: "XBOX CONTROLLER",
-                btn0: "[A] A:", btn1: "[B] B:", btn2: "[X] C:", btn3: "[Y] D:"
+                btn0: "A", btn1: "B", btn2: "X", btn3: "Y"
             },
             generic: {
                 title: "GENERIC GAMEPAD",
-                btn0: "[B0] A:", btn1: "[B1] B:", btn2: "[B2] C:", btn3: "[B3] D:"
+                btn0: "BTN 0", btn1: "BTN 1", btn2: "BTN 2", btn3: "BTN 3"
             }
         };
 
-        controllerType.addEventListener('change', (e) => {
-            const profile = controllerProfiles[e.target.value];
-            controllerTitle.innerText = profile.title;
-            lblBtn0.innerText = profile.btn0;
-            lblBtn1.innerText = profile.btn1;
-            lblBtn2.innerText = profile.btn2;
-            lblBtn3.innerText = profile.btn3;
-            
-            // Semak jika gamepad tiada yang bersambung, set balik text
-            if (!navigator.getGamepads()[0]) dsStatusEl.innerText = "AWAITING PAIR";
-        });
+        // Bound SVG element refs (re-bound after each profile swap)
+        let svgStick, svgBtn0, svgBtn1, svgBtn2, svgBtn3;
+        let svgDpadUp, svgDpadDown, svgDpadLeft, svgDpadRight;
 
-        // --- FULLSCREEN MANAGEMENT ---
+        function bindSvgRefs() {
+            svgStick     = document.getElementById('svgStick');
+            svgBtn0      = document.getElementById('svgBtn0');
+            svgBtn1      = document.getElementById('svgBtn1');
+            svgBtn2      = document.getElementById('svgBtn2');
+            svgBtn3      = document.getElementById('svgBtn3');
+            svgDpadUp    = document.getElementById('svgDpadUp');
+            svgDpadDown  = document.getElementById('svgDpadDown');
+            svgDpadLeft  = document.getElementById('svgDpadLeft');
+            svgDpadRight = document.getElementById('svgDpadRight');
+        }
+
+        // Stick origin (per profile, must match transform="translate(X, Y)" in SVG above)
+        // These MUST match transform="translate(X,Y)" on each #svgStick group above
+        const STICK_ORIGINS = {
+            ps4:     { x: 195, y: 220 },
+            xbox:    { x: 135, y: 175 },
+            generic: { x: 195, y: 200 }
+        };
+        const STICK_RADIUS = 14;
+
+        function applyProfile(key) {
+            const profile = controllerProfiles[key];
+            ctlSvgWrap.innerHTML = SVG_LAYOUTS[key];
+            bindSvgRefs();
+
+            controllerTitle.textContent = profile.title;
+            ctlHeaderTitle.textContent = profile.title;
+            lblBtn0.textContent = profile.btn0;
+            lblBtn1.textContent = profile.btn1;
+            lblBtn2.textContent = profile.btn2;
+            lblBtn3.textContent = profile.btn3;
+
+            // Reset stick visual to center
+            updateStickVisual(0, 0);
+
+            const pads = navigator.getGamepads ? navigator.getGamepads() : [];
+            if (!pads[0]) dsStatusEl.textContent = "AWAITING PAIR";
+        }
+
+        controllerType.addEventListener('change', (e) => applyProfile(e.target.value));
+
+        function currentProfileKey() {
+            return controllerType.value;
+        }
+
+        function updateStickVisual(ax, ay) {
+            if (!svgStick) return;
+            const origin = STICK_ORIGINS[currentProfileKey()];
+            const dx = ax * STICK_RADIUS;
+            const dy = ay * STICK_RADIUS;
+            svgStick.setAttribute('transform', `translate(${origin.x + dx}, ${origin.y + dy})`);
+        }
+
+        // Initial mount
+        applyProfile('ps4');
+
+        // ====================================================================
+        // FULLSCREEN
+        // ====================================================================
         const btnFullscreen = document.getElementById('btnFullscreen');
-        
         function toggleFullscreen() {
             if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(err => {
-                    console.warn(`Ralat Fullscreen: ${err.message}`);
-                });
-            } else {
-                if (document.exitFullscreen) document.exitFullscreen();
+                if (document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen().catch(err => console.warn(err.message));
+                }
+            } else if (document.exitFullscreen) {
+                document.exitFullscreen();
             }
         }
-
         btnFullscreen.addEventListener('click', toggleFullscreen);
 
-        // --- SCREEN WAKE LOCK API & FIRST CLICK HANDLER ---
+        // ====================================================================
+        // WAKE LOCK
+        // ====================================================================
         let wakeLock = null;
-
         async function requestWakeLock() {
+            if (!('wakeLock' in navigator)) return;
+            if (wakeLock) return;
             try {
                 wakeLock = await navigator.wakeLock.request('screen');
-                console.log('Wake Lock Aktif: Screen tidak akan terpadam.');
-                wakeLock.addEventListener('release', () => console.log('Wake Lock terlepas.'));
+                wakeLock.addEventListener('release', () => { wakeLock = null; });
             } catch (err) {
-                console.error(`Wake Lock Error: ${err.name}, ${err.message}`);
+                console.warn(`Wake Lock Error: ${err.name}, ${err.message}`);
             }
         }
-
-        document.addEventListener('click', () => {
-            if (!wakeLock) requestWakeLock();
-        }, { once: true });
-
-        document.addEventListener('visibilitychange', async () => {
-            if (wakeLock !== null && document.visibilityState === 'visible') {
-                requestWakeLock();
-            }
+        document.addEventListener('click', () => { requestWakeLock(); }, { once: true });
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') requestWakeLock();
         });
 
-        // --- BLE CORE (MICRO:BIT PROTOCOL) ---
+        // ====================================================================
+        // BLE CORE
+        // ====================================================================
         const UART_SERVICE_UUID = "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
         const UART_RX_CHARACTERISTIC_UUID = "6e400003-b5a3-f393-e0a9-e50e24dcca9e";
-        let bleDevice, rxChar;
+        let bleDevice = null, rxChar = null;
         let cX = 0, cY = 0, lX = 0, lY = 0;
 
         const botCard = document.getElementById('botCard');
@@ -357,53 +1080,65 @@
         const telEl = document.getElementById('telemetryOut');
         const connBtn = document.getElementById('btnConnect');
 
+        function onDisconnected() {
+            botStatusEl.textContent = "OFFLINE";
+            botStatusEl.classList.add('anim-pulse');
+            botCard.classList.remove('active-success');
+            connBtn.textContent = "LINK BLE";
+            connBtn.classList.add('btn-red');
+            telEl.textContent = "SEVERED";
+            telEl.classList.add('anim-pulse');
+            rxChar = null;
+            showToast('Micro:bit disconnected', 'error');
+        }
+
         connBtn.addEventListener('click', async () => {
             requestWakeLock();
-
-            if (bleDevice?.gatt.connected) { bleDevice.gatt.disconnect(); return; }
+            if (bleDevice && bleDevice.gatt && bleDevice.gatt.connected) {
+                try { bleDevice.gatt.disconnect(); } catch (e) { console.warn(e); }
+                return;
+            }
+            if (!navigator.bluetooth) {
+                showToast('Web Bluetooth tidak disokong di browser ini', 'error', 3500);
+                return;
+            }
             try {
                 bleDevice = await navigator.bluetooth.requestDevice({
                     filters: [{ namePrefix: "BBC" }, { namePrefix: "micro:bit" }],
                     optionalServices: [UART_SERVICE_UUID]
                 });
-                const server = await bleDevice.gatt.connect();
+                bleDevice.addEventListener('gattserverdisconnected', onDisconnected);
+                const server  = await bleDevice.gatt.connect();
                 const service = await server.getPrimaryService(UART_SERVICE_UUID);
                 rxChar = await service.getCharacteristic(UART_RX_CHARACTERISTIC_UUID);
-                
-                botStatusEl.innerText = "LINK ESTABLISHED"; 
+
+                botStatusEl.textContent = "LINK ESTABLISHED";
                 botStatusEl.classList.remove('anim-pulse');
                 botCard.classList.add('active-success');
-                connBtn.innerText = "SEVER CONNECTION";
+                connBtn.textContent = "SEVER CONNECTION";
                 connBtn.classList.remove('btn-red');
                 telEl.classList.remove('anim-pulse');
+                showToast('Micro:bit connected', 'success');
                 await send("mode_analog\n");
-            } catch (e) { console.error("BLE Error:", e); }
+            } catch (e) {
+                console.error("BLE Error:", e);
+                if (e && e.name !== 'NotFoundError') {
+                    showToast('Sambungan gagal: ' + (e.message || e.name), 'error', 3000);
+                }
+            }
         });
 
-        bleDevice?.addEventListener('gattserverdisconnected', () => {
-            botStatusEl.innerText = "OFFLINE"; 
-            botStatusEl.classList.add('anim-pulse');
-            botCard.classList.remove('active-success');
-            connBtn.innerText = "LINK BLE"; 
-            connBtn.classList.add('btn-red');
-            telEl.innerText = "SEVERED";
-            telEl.classList.add('anim-pulse');
-            rxChar = null;
-        });
-
-        // --- PENGHANTARAN DATA TANPA DELAY ---
         let isSending = false;
-
         async function send(s) {
-            telEl.innerText = `${s.replace('\n','')}`;
-            if (!rxChar || isSending) return; 
-            
+            telEl.textContent = `${s.replace('\n', '')}`;
+            if (!rxChar || isSending) return;
             isSending = true;
-            try { 
+            try {
+                const data = new TextEncoder().encode(s);
                 if (rxChar.properties && rxChar.properties.writeWithoutResponse) {
-                    await rxChar.writeValueWithoutResponse(new TextEncoder().encode(s));
+                    await rxChar.writeValueWithoutResponse(data);
                 } else {
-                    await rxChar.writeValue(new TextEncoder().encode(s)); 
+                    await rxChar.writeValue(data);
                 }
             } catch (e) {
                 console.warn("Kesesakan BLE, packet digugurkan:", e);
@@ -412,12 +1147,14 @@
             }
         }
 
-        const fFormat = (v) => (v>=0?'+':'-') + Math.abs(v).toString().padStart(2,'0');
+        const fFormat = (v) => (v >= 0 ? '+' : '-') + Math.abs(v).toString().padStart(2, '0');
 
-        // --- GAMEPAD API BRIDGE ---
+        // ====================================================================
+        // GAMEPAD POLLING
+        // ====================================================================
         const dsCard = document.getElementById('dsCard');
         const btnCalibrate = document.getElementById('btnCalibrate');
-        
+
         const outPsX = document.getElementById('psX');
         const outPsY = document.getElementById('psY');
         const outPsDpad = document.getElementById('psDpad');
@@ -426,12 +1163,17 @@
         const outPsSquare = document.getElementById('psSquare');
         const outPsTriangle = document.getElementById('psTriangle');
 
+        const cellDpad = document.getElementById('cellDpad');
+        const cellBtn0 = document.getElementById('cellBtn0');
+        const cellBtn1 = document.getElementById('cellBtn1');
+        const cellBtn2 = document.getElementById('cellBtn2');
+        const cellBtn3 = document.getElementById('cellBtn3');
+
         let gpState = { cross: false, circle: false, square: false, triangle: false };
         const GP_DEADZONE = 0.15;
-        
+
         let offsetX = 0;
         let offsetY = 0;
-        
         let lastSendTime = 0;
         const SEND_INTERVAL = 40;
 
@@ -441,106 +1183,133 @@
             if (gp) {
                 offsetX = gp.axes[0];
                 offsetY = gp.axes[1];
-                alert("Joystick dikalibrasi! Titik tengah baru telah ditetapkan.");
+                showToast('Joystick dikalibrasi — titik tengah baru ditetapkan', 'success');
             } else {
-                alert("Sila sambungkan controller terlebih dahulu.");
+                showToast('Sila sambungkan controller terlebih dahulu', 'error');
             }
         });
 
-        window.addEventListener("gamepadconnected", (e) => {
-            dsStatusEl.innerText = "CONTROLLER ACQUIRED"; 
+        window.addEventListener("gamepadconnected", () => {
+            dsStatusEl.textContent = "CONTROLLER ACQUIRED";
             dsStatusEl.classList.remove('anim-pulse');
             dsCard.classList.add('active');
+            showToast('Controller acquired', 'success');
         });
 
-        window.addEventListener("gamepaddisconnected", (e) => {
-            dsStatusEl.innerText = "AWAITING PAIR"; 
+        window.addEventListener("gamepaddisconnected", () => {
+            dsStatusEl.textContent = "AWAITING PAIR";
             dsStatusEl.classList.add('anim-pulse');
             dsCard.classList.remove('active');
-            outPsX.innerText = "0.00"; outPsY.innerText = "0.00"; 
-            outPsDpad.innerText = "IDLE"; outPsDpad.classList.remove('val-active');
-            outPsCross.innerText = "OFF"; outPsCircle.innerText = "OFF";
-            outPsSquare.innerText = "OFF"; outPsTriangle.innerText = "OFF";
-            [outPsCross, outPsCircle, outPsSquare, outPsTriangle].forEach(el => el.classList.remove('val-active'));
+            outPsX.textContent = "0.00"; outPsY.textContent = "0.00";
+            outPsDpad.textContent = "IDLE";
+            outPsCross.textContent = "OFF"; outPsCircle.textContent = "OFF";
+            outPsSquare.textContent = "OFF"; outPsTriangle.textContent = "OFF";
+            [outPsX, outPsY].forEach(el => el.classList.remove('val-active'));
+            [cellDpad, cellBtn0, cellBtn1, cellBtn2, cellBtn3].forEach(el => el.classList.remove('active'));
+            // Reset SVG visuals
+            updateStickVisual(0, 0);
+            [svgBtn0, svgBtn1, svgBtn2, svgBtn3].forEach(el => el && el.classList.remove('pressed'));
+            [svgDpadUp, svgDpadDown, svgDpadLeft, svgDpadRight].forEach(el => el && el.classList.remove('pressed'));
             cX = 0; cY = 0; offsetX = 0; offsetY = 0;
-            send("X+00,Y+00\n"); 
+            lX = 999; lY = 999;
+            send("X+00,Y+00\n");
         });
 
-        function updateBtnUI(element, isPressed, labelOn = "ON", labelOff = "OFF") {
-            element.innerText = isPressed ? labelOn : labelOff;
-            if(isPressed) element.classList.add('val-active');
-            else element.classList.remove('val-active');
+        function setStripState(cell, valEl, isPressed, labelOn = "ON", labelOff = "OFF") {
+            valEl.textContent = isPressed ? labelOn : labelOff;
+            if (isPressed) cell.classList.add('active');
+            else cell.classList.remove('active');
+        }
+
+        function setSvgPressed(svgEl, isPressed) {
+            if (!svgEl) return;
+            if (isPressed) svgEl.classList.add('pressed');
+            else svgEl.classList.remove('pressed');
         }
 
         function pollGamepad() {
             const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
-            const gp = gamepads[0]; 
-            
+            const gp = gamepads[0];
+
             if (gp) {
-                let ax = gp.axes[0] - offsetX; 
-                let ay = gp.axes[1] - offsetY; 
-                
+                let ax = gp.axes[0] - offsetX;
+                let ay = gp.axes[1] - offsetY;
                 ax = Math.max(-1, Math.min(1, ax));
                 ay = Math.max(-1, Math.min(1, ay));
-                
-                outPsX.innerText = ax.toFixed(2); outPsY.innerText = ay.toFixed(2);
+
+                outPsX.textContent = ax.toFixed(2);
+                outPsY.textContent = ay.toFixed(2);
                 if (Math.abs(ax) > GP_DEADZONE || Math.abs(ay) > GP_DEADZONE) {
                     outPsX.classList.add('val-active'); outPsY.classList.add('val-active');
                 } else {
                     outPsX.classList.remove('val-active'); outPsY.classList.remove('val-active');
                 }
 
+                // Visual stick movement (uses raw axis, not deadzoned, so it feels responsive)
+                updateStickVisual(ax, ay);
+
                 if (Math.abs(ax) < GP_DEADZONE) ax = 0;
                 if (Math.abs(ay) < GP_DEADZONE) ay = 0;
 
+                // D-pad
+                const upPressed    = !!(gp.buttons[12] && gp.buttons[12].pressed);
+                const downPressed  = !!(gp.buttons[13] && gp.buttons[13].pressed);
+                const leftPressed  = !!(gp.buttons[14] && gp.buttons[14].pressed);
+                const rightPressed = !!(gp.buttons[15] && gp.buttons[15].pressed);
+
+                setSvgPressed(svgDpadUp,    upPressed);
+                setSvgPressed(svgDpadDown,  downPressed);
+                setSvgPressed(svgDpadLeft,  leftPressed);
+                setSvgPressed(svgDpadRight, rightPressed);
+
                 let dpadActive = false; let dpX = 0; let dpY = 0;
-                if (gp.buttons[12] && gp.buttons[12].pressed) { dpY = 90; dpadActive = true; } 
-                if (gp.buttons[13] && gp.buttons[13].pressed) { dpY = -90; dpadActive = true; } 
-                if (gp.buttons[14] && gp.buttons[14].pressed) { dpX = -90; dpadActive = true; } 
-                if (gp.buttons[15] && gp.buttons[15].pressed) { dpX = 90; dpadActive = true; }  
+                if (downPressed)  { dpY =  90; dpadActive = true; }
+                if (upPressed)    { dpY = -90; dpadActive = true; }
+                if (leftPressed)  { dpX = -90; dpadActive = true; }
+                if (rightPressed) { dpX =  90; dpadActive = true; }
 
                 if (dpadActive) {
-                    cX = dpX; cY = dpY; updateBtnUI(outPsDpad, true, "ACTIVE");
+                    cX = dpX; cY = dpY;
+                    setStripState(cellDpad, outPsDpad, true, "ACTIVE");
                 } else {
-                    cX = Math.round(ax * 90); cY = Math.round(-ay * 90);
-                    updateBtnUI(outPsDpad, false, "ON", "IDLE");
+                    cX = Math.round(ax * 90);
+                    cY = Math.round(-ay * 90);
+                    setStripState(cellDpad, outPsDpad, false, "ON", "IDLE");
                 }
 
-                let now = Date.now();
-                if ((cX !== lX || cY !== lY) && (now - lastSendTime > SEND_INTERVAL)) {
+                const now = Date.now();
+                const isReturnToZero = (cX === 0 && cY === 0 && (lX !== 0 || lY !== 0));
+                if ((cX !== lX || cY !== lY) && (isReturnToZero || (now - lastSendTime > SEND_INTERVAL))) {
                     send(`X${fFormat(cX)},Y${fFormat(cY)}\n`);
                     lX = cX; lY = cY; lastSendTime = now;
                 }
 
-                // --- LOGIK BUTANG ---
+                // BUTTONS
                 if (gp.buttons[0] && gp.buttons[0].pressed && !gpState.cross) {
-                    gpState.cross = true; updateBtnUI(outPsCross, true); send("A\n"); 
+                    gpState.cross = true; setStripState(cellBtn0, outPsCross, true); setSvgPressed(svgBtn0, true); send("A\n");
                 } else if (gp.buttons[0] && !gp.buttons[0].pressed && gpState.cross) {
-                    gpState.cross = false; updateBtnUI(outPsCross, false); send("a\n");
+                    gpState.cross = false; setStripState(cellBtn0, outPsCross, false); setSvgPressed(svgBtn0, false); send("a\n");
                 }
-
                 if (gp.buttons[1] && gp.buttons[1].pressed && !gpState.circle) {
-                    gpState.circle = true; updateBtnUI(outPsCircle, true); send("B\n"); 
+                    gpState.circle = true; setStripState(cellBtn1, outPsCircle, true); setSvgPressed(svgBtn1, true); send("B\n");
                 } else if (gp.buttons[1] && !gp.buttons[1].pressed && gpState.circle) {
-                    gpState.circle = false; updateBtnUI(outPsCircle, false); send("b\n");
+                    gpState.circle = false; setStripState(cellBtn1, outPsCircle, false); setSvgPressed(svgBtn1, false); send("b\n");
                 }
-
                 if (gp.buttons[2] && gp.buttons[2].pressed && !gpState.square) {
-                    gpState.square = true; updateBtnUI(outPsSquare, true); send("C\n"); 
+                    gpState.square = true; setStripState(cellBtn2, outPsSquare, true); setSvgPressed(svgBtn2, true); send("C\n");
                 } else if (gp.buttons[2] && !gp.buttons[2].pressed && gpState.square) {
-                    gpState.square = false; updateBtnUI(outPsSquare, false); send("c\n");
+                    gpState.square = false; setStripState(cellBtn2, outPsSquare, false); setSvgPressed(svgBtn2, false); send("c\n");
                 }
-
                 if (gp.buttons[3] && gp.buttons[3].pressed && !gpState.triangle) {
-                    gpState.triangle = true; updateBtnUI(outPsTriangle, true); send("D\n"); 
+                    gpState.triangle = true; setStripState(cellBtn3, outPsTriangle, true); setSvgPressed(svgBtn3, true); send("D\n");
                 } else if (gp.buttons[3] && !gp.buttons[3].pressed && gpState.triangle) {
-                    gpState.triangle = false; updateBtnUI(outPsTriangle, false); send("d\n");
+                    gpState.triangle = false; setStripState(cellBtn3, outPsTriangle, false); setSvgPressed(svgBtn3, false); send("d\n");
                 }
             }
             requestAnimationFrame(pollGamepad);
         }
-        
-        pollGamepad(); 
+
+        pollGamepad();
     </script>
 </body>
 </html>
