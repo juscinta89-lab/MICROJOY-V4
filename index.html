@@ -546,6 +546,9 @@
             <div class="tel-tx-row">
                 <span>TX_OUT:</span><span class="tel-tx-val anim-pulse" id="telemetryOut">AWAITING</span>
             </div>
+            <div class="tel-tx-row" style="margin-top: 8px;">
+                <span>RX_IN:</span><span class="tel-tx-val" id="telemetryIn" style="color: var(--gen-amber); text-shadow: 0 0 8px rgba(255,170,0,0.3);">--</span>
+            </div>
         </div>
 
         <div class="status-cluster">
@@ -1010,6 +1013,7 @@
         const botCard = document.getElementById('botCard');
         const botStatusEl = document.getElementById('botStatus');
         const telEl = document.getElementById('telemetryOut');
+        const telInEl = document.getElementById('telemetryIn');
         const connBtn = document.getElementById('btnConnect');
 
         function onDisconnected() {
@@ -1020,12 +1024,16 @@
             connBtn.classList.add('btn-red');
             telEl.textContent = "SEVERED";
             telEl.classList.add('anim-pulse');
+            if (telInEl) telInEl.textContent = "--";
             rxChar = null;
             if (txChar) {
                 try { txChar.removeEventListener('characteristicvaluechanged', onTxNotification); } catch (e) {}
                 txChar = null;
             }
-            setSumobitVoltage(null);
+            // Reset kedua-dua state voltan dan peratusan
+            sumobitVoltsFromBoard = null;
+            sumobitPercentFromBoard = null;
+            updateSumobitDisplay(null, null);
             showToast('Micro:bit disconnected', 'error');
         }
 
@@ -1124,59 +1132,199 @@
         const voltGamepadBar  = document.getElementById('voltGamepadBar');
 
         let lastSumobitWarnLevel = 'ok';
+        // Simpan peratusan terkini dari Sumobit (lebih tepat dari pengiraan voltan)
+        let sumobitPercentFromBoard = null;
 
-        function setSumobitVoltage(volts) {
-            if (volts === null || isNaN(volts)) {
+        // Tukar peratusan ke tahap (untuk warna sel)
+        function pctToLevel(pct) {
+            if (pct < 20) return 'critical';
+            if (pct < 40) return 'warn';
+            return 'ok';
+        }
+
+        // Tukar voltan ke tahap (sandaran apabila peratusan tiada)
+        function voltsToLevel(volts) {
+            if (volts < SUMOBIT_WARN) return 'critical';
+            if (volts < SUMOBIT_OK) return 'warn';
+            return 'ok';
+        }
+
+        function updateSumobitDisplay(volts, pct) {
+            // Kosong/offline
+            if ((volts === null || isNaN(volts)) && (pct === null || isNaN(pct))) {
                 voltSumobitVal.textContent = '--.--';
                 voltSumobitBar.style.width = '0%';
                 voltSumobitCell.className = 'volt-cell offline';
                 lastSumobitWarnLevel = 'ok';
                 return;
             }
-            voltSumobitVal.textContent = volts.toFixed(2);
 
-            const pct = Math.max(0, Math.min(100,
-                ((volts - SUMOBIT_MIN) / (SUMOBIT_MAX - SUMOBIT_MIN)) * 100));
-            voltSumobitBar.style.width = pct + '%';
+            // Paparkan voltan jika ada, jika tidak guna peratusan
+            if (volts !== null && !isNaN(volts)) {
+                voltSumobitVal.textContent = volts.toFixed(2);
+            } else if (pct !== null && !isNaN(pct)) {
+                voltSumobitVal.textContent = pct.toFixed(0) + '%';
+            }
 
-            let level = 'ok';
-            if (volts < SUMOBIT_WARN) level = 'critical';
-            else if (volts < SUMOBIT_OK) level = 'warn';
+            // Bar progress: utamakan peratusan dari board (lebih tepat),
+            // sandaran kepada pengiraan voltan
+            let barPct;
+            if (pct !== null && !isNaN(pct)) {
+                barPct = Math.max(0, Math.min(100, pct));
+            } else {
+                barPct = Math.max(0, Math.min(100,
+                    ((volts - SUMOBIT_MIN) / (SUMOBIT_MAX - SUMOBIT_MIN)) * 100));
+            }
+            voltSumobitBar.style.width = barPct + '%';
 
+            // Tahap warna: utamakan peratusan, sandaran kepada voltan
+            const level = (pct !== null && !isNaN(pct)) ? pctToLevel(pct) : voltsToLevel(volts);
             voltSumobitCell.className = 'volt-cell' + (level === 'ok' ? '' : ' ' + level);
 
+            // Toast amaran (hanya pada peralihan ke tahap yang lebih teruk)
             if (level === 'critical' && lastSumobitWarnLevel !== 'critical') {
-                showToast(`⚠ Bateri Sumobit kritikal: ${volts.toFixed(2)}V`, 'error', 3500);
+                const reading = (volts !== null && !isNaN(volts))
+                    ? `${volts.toFixed(2)}V`
+                    : `${Math.round(pct)}%`;
+                showToast(`⚠ Bateri Sumobit kritikal: ${reading}`, 'error', 3500);
             } else if (level === 'warn' && lastSumobitWarnLevel === 'ok') {
-                showToast(`Bateri Sumobit rendah: ${volts.toFixed(2)}V`, 'error', 2800);
+                const reading = (volts !== null && !isNaN(volts))
+                    ? `${volts.toFixed(2)}V`
+                    : `${Math.round(pct)}%`;
+                showToast(`Bateri Sumobit rendah: ${reading}`, 'error', 2800);
             }
             lastSumobitWarnLevel = level;
         }
 
+        // Simpan voltan terkini dari board
+        let sumobitVoltsFromBoard = null;
+
+        function setSumobitVoltage(volts) {
+            if (volts === null || isNaN(volts)) {
+                sumobitVoltsFromBoard = null;
+                updateSumobitDisplay(null, sumobitPercentFromBoard);
+                return;
+            }
+            sumobitVoltsFromBoard = volts;
+            updateSumobitDisplay(volts, sumobitPercentFromBoard);
+        }
+
+        function setSumobitPercent(pct) {
+            if (pct === null || isNaN(pct)) {
+                sumobitPercentFromBoard = null;
+                updateSumobitDisplay(sumobitVoltsFromBoard, null);
+                return;
+            }
+            sumobitPercentFromBoard = pct;
+            updateSumobitDisplay(sumobitVoltsFromBoard, pct);
+        }
+
         // Huraikan bait notifikasi UART (micro:bit -> telefon)
+        // Sokong pelbagai delimiter: \n, \r, comma, atau timeout-based flush
         const textDecoder = new TextDecoder('utf-8');
         let rxBuffer = '';
+        let rxFlushTimer = null;
+        const RX_DEBUG = true; // tukar ke false untuk matikan log debug
+
         function onTxNotification(event) {
             const chunk = textDecoder.decode(event.target.value);
-            rxBuffer += chunk;
-            let nl;
-            while ((nl = rxBuffer.indexOf('\n')) !== -1) {
-                const line = rxBuffer.slice(0, nl).trim();
-                rxBuffer = rxBuffer.slice(nl + 1);
-                if (line) parseSumobitLine(line);
+            if (RX_DEBUG) console.log('[BLE RX raw]', JSON.stringify(chunk), 'bytes:', event.target.value.byteLength);
+
+            // Kemas kini paparan RX dengan data mentah (untuk debugging visual)
+            if (telInEl) {
+                const display = chunk.replace(/[\r\n]/g, '↵').substring(0, 20);
+                telInEl.textContent = display;
             }
+
+            rxBuffer += chunk;
+
+            // Cuba pisahkan pada delimiter biasa (newline, carriage return, atau colon-separated)
+            let processed = true;
+            while (processed) {
+                processed = false;
+                // Cari kedudukan delimiter terawal
+                let idx = -1;
+                for (const delim of ['\n', '\r', ';']) {
+                    const i = rxBuffer.indexOf(delim);
+                    if (i !== -1 && (idx === -1 || i < idx)) idx = i;
+                }
+                if (idx !== -1) {
+                    const line = rxBuffer.slice(0, idx).trim();
+                    rxBuffer = rxBuffer.slice(idx + 1);
+                    if (line) parseSumobitLine(line);
+                    processed = true;
+                }
+            }
+
+            // Jika tiada delimiter tetapi buffer mengandungi nombor lengkap,
+            // cuba huraikannya selepas 200ms (timeout-based flush)
+            if (rxFlushTimer) clearTimeout(rxFlushTimer);
+            if (rxBuffer.length > 0) {
+                rxFlushTimer = setTimeout(() => {
+                    const line = rxBuffer.trim();
+                    if (line) {
+                        if (RX_DEBUG) console.log('[BLE RX flush]', JSON.stringify(line));
+                        parseSumobitLine(line);
+                    }
+                    rxBuffer = '';
+                }, 200);
+            }
+
             if (rxBuffer.length > 256) rxBuffer = rxBuffer.slice(-128);
         }
 
         function parseSumobitLine(line) {
-            // "V11.8" atau "V11" — bacaan voltan
-            const vMatch = line.match(/^V\s*([0-9]+(?:\.[0-9]+)?)/i);
-            if (vMatch) {
-                const volts = parseFloat(vMatch[1]);
-                if (!isNaN(volts)) setSumobitVoltage(volts);
+            if (RX_DEBUG) console.log('[Sumobit parse]', JSON.stringify(line));
+
+            // Format Sumobit sebenar: "volt:11.85" — voltan dalam Volt
+            const voltMatch = line.match(/^volt[:=\s]+([0-9]+(?:\.[0-9]+)?)/i);
+            if (voltMatch) {
+                const volts = parseFloat(voltMatch[1]);
+                if (!isNaN(volts) && volts > 0 && volts < 30) {
+                    if (RX_DEBUG) console.log('[Sumobit] voltan:', volts);
+                    setSumobitVoltage(volts);
+                    return;
+                }
+            }
+
+            // Format Sumobit sebenar: "battery:75" — peratusan bateri
+            const battMatch = line.match(/^batt(?:ery)?[:=\s]+([0-9]+(?:\.[0-9]+)?)/i);
+            if (battMatch) {
+                const pct = parseFloat(battMatch[1]);
+                if (!isNaN(pct) && pct >= 0 && pct <= 100) {
+                    if (RX_DEBUG) console.log('[Sumobit] bateri %:', pct);
+                    setSumobitPercent(pct);
+                    return;
+                }
+            }
+
+            // Format pong (untuk ukuran latency)
+            if (/^pong/i.test(line)) {
+                if (RX_DEBUG) console.log('[Sumobit] pong diterima');
                 return;
             }
-            // Akan datang: telemetri lain boleh dihuraikan di sini (cth. "T25.4" suhu)
+
+            // Format alternatif: "V11.8" atau "V11" — dengan prefix V
+            const vMatch = line.match(/^V\s*([0-9]+(?:\.[0-9]+)?)/);
+            if (vMatch) {
+                const volts = parseFloat(vMatch[1]);
+                if (!isNaN(volts) && volts > 0 && volts < 30) {
+                    setSumobitVoltage(volts);
+                    return;
+                }
+            }
+
+            // Format alternatif: nombor sahaja (cth. "11.8")
+            const numMatch = line.match(/^([0-9]+(?:\.[0-9]+)?)$/);
+            if (numMatch) {
+                const val = parseFloat(numMatch[1]);
+                if (!isNaN(val) && val >= 5 && val <= 30) {
+                    setSumobitVoltage(val);
+                    return;
+                }
+            }
+
+            if (RX_DEBUG) console.log('[Sumobit] format tidak dikenali:', line);
         }
 
         // ----- Bateri controller (Gamepad API extension jika tersedia) -----
@@ -1209,19 +1357,58 @@
         }
 
         // Baca bateri controller menggunakan apa-apa API yang tersedia.
-        // Return true jika dapat bacaan sebenar, false jika tidak.
+        // NOTA TEKNIKAL: Web Gamepad API standard TIDAK mendedahkan bateri.
+        // Properti gamepad.batteryLevel hanya wujud pada:
+        //   - Chrome OS dengan DualSense USB
+        //   - Beberapa build Chromium eksperimental dengan flag aktif
+        // Pada Chrome Android, iOS Safari, dan Firefox, API ini TIDAK WUJUD,
+        // jadi paparan akan kekal "N/A" — ini bukan bug, tetapi had platform.
         function readControllerBattery(gp) {
             if (!gp) return false;
-            // Chromium eksperimental: gamepad.batteryLevel (0..1) atau gamepad.battery.level
+
+            // Cuba 1: gamepad.batteryLevel (0..1)
             if (typeof gp.batteryLevel === 'number') {
+                if (RX_DEBUG) console.log('[Controller batt] gp.batteryLevel:', gp.batteryLevel);
                 setControllerBattery(gp.batteryLevel * 100, gp.charging);
                 return true;
             }
+            // Cuba 2: gamepad.battery.level (eksperimental)
             if (gp.battery && typeof gp.battery.level === 'number') {
+                if (RX_DEBUG) console.log('[Controller batt] gp.battery.level:', gp.battery.level);
                 setControllerBattery(gp.battery.level * 100, gp.battery.charging);
                 return true;
             }
+            // Cuba 3: gamepad.batteryPercent (custom HID)
+            if (typeof gp.batteryPercent === 'number') {
+                setControllerBattery(gp.batteryPercent, false);
+                return true;
+            }
+
             return false;
+        }
+
+        // Diagnostik bateri: log apa yang sebenarnya disokong oleh gamepad
+        let batteryDiagDone = false;
+        function logBatteryDiagnostics(gp) {
+            if (batteryDiagDone || !gp) return;
+            batteryDiagDone = true;
+            console.log('[Battery Diag] Controller ID:', gp.id);
+            console.log('[Battery Diag] Browser:', navigator.userAgent);
+            let found = false;
+            for (const key in gp) {
+                if (/batter|level|charge/i.test(key)) {
+                    console.log('  ', key, '=', gp[key]);
+                    found = true;
+                }
+            }
+            if (!found) {
+                console.warn('[Battery Diag] Browser ini tidak menyokong API bateri gamepad.');
+                console.warn('[Battery Diag] Paparan akan kekal "N/A" — ini had Web Gamepad API.');
+                console.warn('[Battery Diag] Sokongan terhad kepada Chrome OS dan build Chromium tertentu sahaja.');
+                // Kemaskini label untuk lebih jelas pada pengguna
+                voltGamepadVal.textContent = 'N/A';
+                voltGamepadCell.title = 'Web Gamepad API tidak menyokong bacaan bateri pada browser ini';
+            }
         }
 
         // Refresh berkala untuk bateri controller
@@ -1284,9 +1471,11 @@
             dsStatusEl.classList.remove('anim-pulse');
             dsCard.classList.add('active');
             showToast('Controller acquired', 'success');
-            // Cuba baca bateri serta-merta
+            // Cuba baca bateri serta-merta dan jalankan diagnostik
             const pads = navigator.getGamepads ? navigator.getGamepads() : [];
-            readControllerBattery(pads[e.gamepad.index] || pads[0]);
+            const gp = pads[e.gamepad.index] || pads[0];
+            logBatteryDiagnostics(gp);
+            readControllerBattery(gp);
         });
 
         window.addEventListener("gamepaddisconnected", () => {
