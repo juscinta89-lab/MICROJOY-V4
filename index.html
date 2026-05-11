@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>MICROJOY UNIVERSAL v2.4</title>
+    <title>MICROJOY UNIVERSAL v2.5</title>
 
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0a0a0c" id="metaThemeColor">
@@ -309,6 +309,76 @@
         }
         .tel-tx-val { color: var(--cyan-glow); text-shadow: 0 0 12px var(--cyan-shadow); font-weight: bold; }
 
+        /* ========== VOLTAGE / BATTERY TELEMETRY ========== */
+        .volt-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .volt-cell {
+            background: var(--row-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 8px;
+            padding: 10px 12px;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.3s;
+        }
+        .volt-cell .volt-label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .volt-cell .volt-icon { font-size: 0.85rem; opacity: 0.7; }
+        .volt-cell .volt-val {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--text-main);
+            letter-spacing: 1px;
+            line-height: 1;
+            transition: color 0.3s;
+        }
+        .volt-cell .volt-unit {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-left: 3px;
+            font-weight: normal;
+        }
+        .volt-bar {
+            margin-top: 8px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .volt-bar-fill {
+            height: 100%;
+            background: var(--success);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.4s ease-out, background-color 0.3s;
+        }
+        .volt-cell.warn .volt-val { color: var(--gen-amber); text-shadow: 0 0 8px rgba(255, 170, 0, 0.4); }
+        .volt-cell.warn .volt-bar-fill { background: var(--gen-amber); }
+        .volt-cell.critical .volt-val { color: var(--theme-red); text-shadow: 0 0 10px var(--theme-red-glow); }
+        .volt-cell.critical .volt-bar-fill { background: var(--theme-red); }
+        .volt-cell.critical {
+            border-color: var(--theme-red-glow);
+            animation: voltPulse 1.5s ease-in-out infinite;
+        }
+        .volt-cell.offline .volt-val { color: var(--text-muted); opacity: 0.4; }
+        .volt-cell.offline .volt-bar-fill { background: var(--text-muted); opacity: 0.3; }
+        @keyframes voltPulse {
+            0%, 100% { box-shadow: 0 0 0 0 var(--theme-red-glow); }
+            50% { box-shadow: 0 0 0 4px transparent; }
+        }
+
         .status-cluster { display: flex; width: 100%; max-width: 600px; gap: 15px; }
 
         .status-card {
@@ -401,7 +471,7 @@
     <div class="header">
         <div class="brand-container">
             <div class="brand-line">MICROJOY UNIVERSAL</div>
-            <div class="ver-tag">SYSTEM v2.4 // ALIMIN</div>
+            <div class="ver-tag">SYSTEM v2.5 // ALIMIN</div>
         </div>
         <div class="header-controls">
             <select id="controllerType" class="btn-icon" aria-label="Controller Type">
@@ -454,6 +524,25 @@
                 </div>
             </div>
 
+            <div class="volt-row">
+                <div class="volt-cell offline" id="voltSumobit">
+                    <div class="volt-label">
+                        <span>SUMOBIT BATT</span>
+                        <span class="volt-icon">⚡</span>
+                    </div>
+                    <div><span class="volt-val" id="voltSumobitVal">--.--</span><span class="volt-unit">V</span></div>
+                    <div class="volt-bar"><div class="volt-bar-fill" id="voltSumobitBar"></div></div>
+                </div>
+                <div class="volt-cell offline" id="voltGamepad">
+                    <div class="volt-label">
+                        <span>CONTROLLER</span>
+                        <span class="volt-icon">🔋</span>
+                    </div>
+                    <div><span class="volt-val" id="voltGamepadVal">---</span><span class="volt-unit">%</span></div>
+                    <div class="volt-bar"><div class="volt-bar-fill" id="voltGamepadBar"></div></div>
+                </div>
+            </div>
+
             <div class="tel-tx-row">
                 <span>TX_OUT:</span><span class="tel-tx-val anim-pulse" id="telemetryOut">AWAITING</span>
             </div>
@@ -484,35 +573,21 @@
 
         // ====================================================================
         // SVG CONTROLLER LAYOUTS — clean line-art, well-proportioned bodies.
-        // ALL three use viewBox 520x320 with consistent zoning:
-        //   • Top: shoulder bumpers
-        //   • Body curve: middle 50-280 vertically
-        //   • D-pad / left stick / face buttons / right stick: positioned
-        //     per profile to match real-world controller layouts.
         // ====================================================================
         const SVG_LAYOUTS = {
-            // -------- PS4 / DualShock 4 --------
-            // D-pad TL, touchpad center-top, face buttons TR, dual sticks
-            // bottom side-by-side, PS button between them.
             ps4: `
 <svg viewBox="0 0 520 320" xmlns="http://www.w3.org/2000/svg">
 
-  <!-- L1 / R1 shoulder bumpers (small tabs above body) -->
   <path class="line-body" d="M 105 65 Q 95 50 130 50 L 175 50 Q 200 50 195 70 Z"/>
   <path class="line-body" d="M 415 65 Q 425 50 390 50 L 345 50 Q 320 50 325 70 Z"/>
   <text x="148" y="64" font-size="9" text-anchor="middle">L1</text>
   <text x="372" y="64" font-size="9" text-anchor="middle">R1</text>
 
-  <!-- Lightbar slot on top edge -->
   <line class="line-thin" x1="225" y1="76" x2="295" y2="76"/>
   <rect x="227" y="78" width="66" height="3" rx="1" fill="var(--ps-light)" stroke="none">
     <animate attributeName="opacity" values="1;0.3;1" dur="3s" repeatCount="indefinite"/>
   </rect>
 
-  <!--
-    DualShock 4 body: two rounded grip lobes connected by a flatter middle
-    bridge. Top has a slight dip for the lightbar; bottom has W-curve.
-  -->
   <path class="line-body" d="
     M 110 80
     C 75 80, 45 100, 38 145
@@ -530,9 +605,7 @@
     C 170 96, 140 84, 110 80
     Z"/>
 
-  <!-- Touchpad : large rectangle top-center -->
   <rect class="line-mid" x="200" y="115" width="120" height="55" rx="8"/>
-  <!-- Dot grid inside touchpad -->
   <g fill="var(--text-muted)" stroke="none" opacity="0.35">
     <circle cx="220" cy="130" r="0.8"/><circle cx="235" cy="130" r="0.8"/>
     <circle cx="250" cy="130" r="0.8"/><circle cx="265" cy="130" r="0.8"/>
@@ -545,11 +618,9 @@
     <circle cx="280" cy="155" r="0.8"/><circle cx="295" cy="155" r="0.8"/>
   </g>
 
-  <!-- SHARE / OPTIONS small angled tabs flanking touchpad -->
   <path class="line-thin" d="M 178 122 L 185 122 L 188 132 L 185 138 L 178 138 Z"/>
   <path class="line-thin" d="M 342 122 L 335 122 L 332 132 L 335 138 L 342 138 Z"/>
 
-  <!-- D-PAD : top-left, plus-cross outline -->
   <g transform="translate(135, 142)">
     <path class="line-mid" d="
       M -10 -25 L 10 -25 L 10 -10 L 25 -10 L 25 10 L 10 10 L 10 25 L -10 25 L -10 10 L -25 10 L -25 -10 L -10 -10 Z"/>
@@ -559,7 +630,6 @@
     <polygon id="svgDpadRight" class="pad-dpad-arrow" points=" 19,0  12,-5  12,5"/>
   </g>
 
-  <!-- FACE BUTTONS : top-right diamond -->
   <g transform="translate(385, 142)">
     <g id="svgBtn3" class="pad-btn btn-triangle">
       <circle class="btn-outline" cx="0" cy="-26" r="14" stroke="var(--text-main)" fill="none"/>
@@ -582,21 +652,18 @@
     </g>
   </g>
 
-  <!-- LEFT STICK (DYNAMIC) : bottom-left within left lobe -->
   <g id="svgStick" class="pad-stick" transform="translate(195, 215)">
     <circle class="line-mid" cx="0" cy="0" r="26"/>
     <circle class="line-mid" cx="0" cy="0" r="22" stroke-dasharray="2 3"/>
     <circle class="line-thin" cx="0" cy="0" r="13"/>
   </g>
 
-  <!-- RIGHT STICK (decorative) : bottom-right within right lobe -->
   <g transform="translate(325, 215)">
     <circle class="line-mid" cx="0" cy="0" r="26" opacity="0.5"/>
     <circle class="line-mid" cx="0" cy="0" r="22" stroke-dasharray="2 3" opacity="0.5"/>
     <circle class="line-thin" cx="0" cy="0" r="13" opacity="0.5"/>
   </g>
 
-  <!-- PS Home button between sticks -->
   <circle class="line-thin" cx="260" cy="215" r="6"/>
   <text x="260" y="218" font-size="7" text-anchor="middle" fill="var(--ps-light)">
     PS
@@ -604,22 +671,14 @@
   </text>
 </svg>`,
 
-            // -------- Xbox --------
-            // Stick L top-left (HIGH), face buttons TR, D-pad below stick L,
-            // stick R bottom-right (LOWER than stick L). Guide center-top.
             xbox: `
 <svg viewBox="0 0 520 320" xmlns="http://www.w3.org/2000/svg">
 
-  <!-- LB / RB shoulder bumpers -->
   <path class="line-body" d="M 90 65 Q 80 48 120 48 L 175 48 Q 200 48 195 70 Z"/>
   <path class="line-body" d="M 430 65 Q 440 48 400 48 L 345 48 Q 320 48 325 70 Z"/>
   <text x="143" y="62" font-size="9" text-anchor="middle">LB</text>
   <text x="377" y="62" font-size="9" text-anchor="middle">RB</text>
 
-  <!--
-    Xbox body: wider, longer grip handles. Top edge gently arcs with a
-    small dip at the centre for the guide button.
-  -->
   <path class="line-body" d="
     M 110 88
     C 70 86, 42 100, 35 150
@@ -637,14 +696,12 @@
     C 170 110, 140 95, 110 88
     Z"/>
 
-  <!-- LEFT STICK (DYNAMIC) : top-left, HIGH position -->
   <g id="svgStick" class="pad-stick" transform="translate(135, 175)">
     <circle class="line-mid" cx="0" cy="0" r="30"/>
     <circle class="line-mid" cx="0" cy="0" r="24" stroke-dasharray="2 3"/>
     <circle class="line-thin" cx="0" cy="0" r="14"/>
   </g>
 
-  <!-- D-PAD : bottom-left, BELOW left stick -->
   <g transform="translate(205, 250)">
     <circle class="line-mid" cx="0" cy="0" r="24"/>
     <path class="line-mid" d="
@@ -655,7 +712,6 @@
     <polygon id="svgDpadRight" class="pad-dpad-arrow" points=" 13,0  7,-4  7,4"/>
   </g>
 
-  <!-- FACE BUTTONS Y/B/A/X : top-right diamond -->
   <g transform="translate(385, 175)">
     <g id="svgBtn3" class="pad-btn btn-xbox-y">
       <circle class="btn-outline" cx="0" cy="-28" r="14" stroke="var(--text-main)" fill="none"/>
@@ -675,14 +731,12 @@
     </g>
   </g>
 
-  <!-- RIGHT STICK : asymmetric, bottom-right -->
   <g transform="translate(310, 250)">
     <circle class="line-mid" cx="0" cy="0" r="30" opacity="0.5"/>
     <circle class="line-mid" cx="0" cy="0" r="24" stroke-dasharray="2 3" opacity="0.5"/>
     <circle class="line-thin" cx="0" cy="0" r="14" opacity="0.5"/>
   </g>
 
-  <!-- Xbox guide button : top-center -->
   <circle class="line-mid" cx="260" cy="155" r="14"/>
   <circle cx="260" cy="155" r="8" fill="none" stroke="var(--xbox-light)" stroke-width="1.4"/>
   <path d="M 254 151 Q 260 147 266 151" fill="none" stroke="var(--xbox-light)" stroke-width="1.4"/>
@@ -692,33 +746,23 @@
     <animate attributeName="opacity" values="0.5;0;0.5" dur="2.5s" repeatCount="indefinite"/>
   </circle>
 
-  <!-- View / Menu small dots flanking guide -->
   <circle class="line-thin" cx="225" cy="183" r="4"/>
   <circle class="line-thin" cx="295" cy="183" r="4"/>
 </svg>`,
 
-            // -------- Generic (Switch-Pro / 8BitDo style) --------
-            // D-pad TL, SELECT/HOME/START top-center, face buttons TR diamond,
-            // dual sticks bottom symmetric, home button between sticks.
             generic: `
 <svg viewBox="0 0 520 320" xmlns="http://www.w3.org/2000/svg">
 
-  <!-- L bumper + ZL trigger (left top) -->
   <path class="line-body" d="M 105 65 Q 95 50 125 50 L 180 50 Q 200 50 195 70 Z"/>
   <text x="148" y="64" font-size="8" text-anchor="middle">L</text>
   <path class="line-thin" d="M 110 70 L 110 78 Q 115 80 175 80 L 180 70"/>
   <text x="148" y="76" font-size="6" text-anchor="middle">ZL</text>
 
-  <!-- R bumper + ZR trigger (right top) -->
   <path class="line-body" d="M 415 65 Q 425 50 395 50 L 340 50 Q 320 50 325 70 Z"/>
   <text x="372" y="64" font-size="8" text-anchor="middle">R</text>
   <path class="line-thin" d="M 410 70 L 410 78 Q 405 80 345 80 L 340 70"/>
   <text x="372" y="76" font-size="6" text-anchor="middle">ZR</text>
 
-  <!--
-    Generic / Switch-Pro style body — slightly stubbier than DS4,
-    symmetrical, gently curved.
-  -->
   <path class="line-body" d="
     M 130 85
     C 95 85, 70 100, 65 140
@@ -736,7 +780,6 @@
     C 180 100, 155 90, 130 85
     Z"/>
 
-  <!-- SELECT / HOME / START : 3 small buttons top-center -->
   <circle class="line-thin" cx="225" cy="138" r="5"/>
   <circle class="line-thin" cx="260" cy="138" r="5"/>
   <circle class="line-thin" cx="295" cy="138" r="5"/>
@@ -744,7 +787,6 @@
   <text x="260" y="125" font-size="6" text-anchor="middle" opacity="0.55">HOME</text>
   <text x="295" y="125" font-size="6" text-anchor="middle" opacity="0.55">START</text>
 
-  <!-- D-PAD : top-left, plus-cross -->
   <g transform="translate(150, 148)">
     <path class="line-mid" d="
       M -8 -22 L 8 -22 L 8 -8 L 22 -8 L 22 8 L 8 8 L 8 22 L -8 22 L -8 8 L -22 8 L -22 -8 L -8 -8 Z"/>
@@ -754,7 +796,6 @@
     <polygon id="svgDpadRight" class="pad-dpad-arrow" points=" 16,0  9,-4  9,4"/>
   </g>
 
-  <!-- FACE BUTTONS Y/B/A/X : top-right diamond -->
   <g transform="translate(370, 148)">
     <g id="svgBtn3" class="pad-btn btn-gen">
       <circle class="btn-outline" cx="0" cy="-25" r="13" stroke="var(--text-main)" fill="none"/>
@@ -774,21 +815,18 @@
     </g>
   </g>
 
-  <!-- LEFT STICK (DYNAMIC) : bottom-left, symmetric -->
   <g id="svgStick" class="pad-stick" transform="translate(195, 210)">
     <circle class="line-mid" cx="0" cy="0" r="24"/>
     <circle class="line-mid" cx="0" cy="0" r="20" stroke-dasharray="2 3"/>
     <circle class="line-thin" cx="0" cy="0" r="12"/>
   </g>
 
-  <!-- RIGHT STICK : bottom-right, symmetric mirror of left -->
   <g transform="translate(325, 210)">
     <circle class="line-mid" cx="0" cy="0" r="24" opacity="0.5"/>
     <circle class="line-mid" cx="0" cy="0" r="20" stroke-dasharray="2 3" opacity="0.5"/>
     <circle class="line-thin" cx="0" cy="0" r="12" opacity="0.5"/>
   </g>
 
-  <!-- Home button between sticks -->
   <rect class="line-thin" x="253" y="203" width="14" height="14" rx="2"/>
   <path d="M 256 211 L 260 207 L 264 211 L 264 214 L 256 214 Z" fill="none" stroke="var(--gen-amber)" stroke-width="1.2">
     <animate attributeName="opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite"/>
@@ -869,7 +907,6 @@
             }
         };
 
-        // Bound SVG element refs (re-bound after each profile swap)
         let svgStick, svgBtn0, svgBtn1, svgBtn2, svgBtn3;
         let svgDpadUp, svgDpadDown, svgDpadLeft, svgDpadRight;
 
@@ -885,7 +922,6 @@
             svgDpadRight = document.getElementById('svgDpadRight');
         }
 
-        // MUST match transform="translate(X,Y)" on each #svgStick group above
         const STICK_ORIGINS = {
             ps4:     { x: 195, y: 215 },
             xbox:    { x: 135, y: 175 },
@@ -907,8 +943,6 @@
 
             updateStickVisual(0, 0);
 
-            // BUGFIX: was `if (!pads)` (always truthy because pads is array).
-            // Should be checking pads[0] for the first connected gamepad.
             const pads = navigator.getGamepads ? navigator.getGamepads() : [];
             if (!pads[0]) dsStatusEl.textContent = "AWAITING PAIR";
         }
@@ -968,7 +1002,9 @@
         // ====================================================================
         const UART_SERVICE_UUID = "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
         const UART_RX_CHARACTERISTIC_UUID = "6e400003-b5a3-f393-e0a9-e50e24dcca9e";
-        let bleDevice = null, rxChar = null;
+        // TX char: micro:bit -> phone (notifications) untuk terima voltan Sumobit
+        const UART_TX_CHARACTERISTIC_UUID = "6e400002-b5a3-f393-e0a9-e50e24dcca9e";
+        let bleDevice = null, rxChar = null, txChar = null;
         let cX = 0, cY = 0, lX = 0, lY = 0;
 
         const botCard = document.getElementById('botCard');
@@ -985,6 +1021,11 @@
             telEl.textContent = "SEVERED";
             telEl.classList.add('anim-pulse');
             rxChar = null;
+            if (txChar) {
+                try { txChar.removeEventListener('characteristicvaluechanged', onTxNotification); } catch (e) {}
+                txChar = null;
+            }
+            setSumobitVoltage(null);
             showToast('Micro:bit disconnected', 'error');
         }
 
@@ -1007,6 +1048,15 @@
                 const server  = await bleDevice.gatt.connect();
                 const service = await server.getPrimaryService(UART_SERVICE_UUID);
                 rxChar = await service.getCharacteristic(UART_RX_CHARACTERISTIC_UUID);
+
+                // Langgan TX notifications untuk terima voltan bateri Sumobit
+                try {
+                    txChar = await service.getCharacteristic(UART_TX_CHARACTERISTIC_UUID);
+                    txChar.addEventListener('characteristicvaluechanged', onTxNotification);
+                    await txChar.startNotifications();
+                } catch (txErr) {
+                    console.warn('TX characteristic not available:', txErr);
+                }
 
                 botStatusEl.textContent = "LINK ESTABLISHED";
                 botStatusEl.classList.remove('anim-pulse');
@@ -1046,6 +1096,150 @@
         const fFormat = (v) => (v >= 0 ? '+' : '-') + Math.abs(v).toString().padStart(2, '0');
 
         // ====================================================================
+        // BATTERY / VOLTAGE TELEMETRY
+        // ====================================================================
+        // Voltan Sumobit: diterima dari micro:bit melalui notifikasi UART.
+        // Protokol yang dijangka (micro:bit hantar secara berkala):
+        //   "V11.8\n"   - voltan bateri dalam volt (float atau integer)
+        //
+        // Controller (PS4/DualSense): baca dari Gamepad API extension jika
+        // tersedia (gamepad.batteryLevel atau gamepad.battery.level).
+        //
+        // Threshold untuk Sumobit (3S Li-ion ~9V-12.6V):
+        //   >= 11.0V : OK (hijau)
+        //   10.0V - 11.0V : Amaran (kuning)
+        //   <  10.0V : Kritikal (merah, berdenyut)
+        // Untuk peratus controller: <20 kritikal, <40 amaran, selainnya OK.
+
+        const SUMOBIT_OK = 11.0;
+        const SUMOBIT_WARN = 10.0;
+        const SUMOBIT_MIN = 9.0;
+        const SUMOBIT_MAX = 12.6;
+
+        const voltSumobitCell = document.getElementById('voltSumobit');
+        const voltSumobitVal  = document.getElementById('voltSumobitVal');
+        const voltSumobitBar  = document.getElementById('voltSumobitBar');
+        const voltGamepadCell = document.getElementById('voltGamepad');
+        const voltGamepadVal  = document.getElementById('voltGamepadVal');
+        const voltGamepadBar  = document.getElementById('voltGamepadBar');
+
+        let lastSumobitWarnLevel = 'ok';
+
+        function setSumobitVoltage(volts) {
+            if (volts === null || isNaN(volts)) {
+                voltSumobitVal.textContent = '--.--';
+                voltSumobitBar.style.width = '0%';
+                voltSumobitCell.className = 'volt-cell offline';
+                lastSumobitWarnLevel = 'ok';
+                return;
+            }
+            voltSumobitVal.textContent = volts.toFixed(2);
+
+            const pct = Math.max(0, Math.min(100,
+                ((volts - SUMOBIT_MIN) / (SUMOBIT_MAX - SUMOBIT_MIN)) * 100));
+            voltSumobitBar.style.width = pct + '%';
+
+            let level = 'ok';
+            if (volts < SUMOBIT_WARN) level = 'critical';
+            else if (volts < SUMOBIT_OK) level = 'warn';
+
+            voltSumobitCell.className = 'volt-cell' + (level === 'ok' ? '' : ' ' + level);
+
+            if (level === 'critical' && lastSumobitWarnLevel !== 'critical') {
+                showToast(`⚠ Bateri Sumobit kritikal: ${volts.toFixed(2)}V`, 'error', 3500);
+            } else if (level === 'warn' && lastSumobitWarnLevel === 'ok') {
+                showToast(`Bateri Sumobit rendah: ${volts.toFixed(2)}V`, 'error', 2800);
+            }
+            lastSumobitWarnLevel = level;
+        }
+
+        // Huraikan bait notifikasi UART (micro:bit -> telefon)
+        const textDecoder = new TextDecoder('utf-8');
+        let rxBuffer = '';
+        function onTxNotification(event) {
+            const chunk = textDecoder.decode(event.target.value);
+            rxBuffer += chunk;
+            let nl;
+            while ((nl = rxBuffer.indexOf('\n')) !== -1) {
+                const line = rxBuffer.slice(0, nl).trim();
+                rxBuffer = rxBuffer.slice(nl + 1);
+                if (line) parseSumobitLine(line);
+            }
+            if (rxBuffer.length > 256) rxBuffer = rxBuffer.slice(-128);
+        }
+
+        function parseSumobitLine(line) {
+            // "V11.8" atau "V11" — bacaan voltan
+            const vMatch = line.match(/^V\s*([0-9]+(?:\.[0-9]+)?)/i);
+            if (vMatch) {
+                const volts = parseFloat(vMatch[1]);
+                if (!isNaN(volts)) setSumobitVoltage(volts);
+                return;
+            }
+            // Akan datang: telemetri lain boleh dihuraikan di sini (cth. "T25.4" suhu)
+        }
+
+        // ----- Bateri controller (Gamepad API extension jika tersedia) -----
+        let lastControllerWarnLevel = 'ok';
+
+        function setControllerBattery(percent, chargingHint) {
+            if (percent === null || percent === undefined || isNaN(percent)) {
+                voltGamepadVal.textContent = 'N/A';
+                voltGamepadBar.style.width = '0%';
+                voltGamepadCell.className = 'volt-cell offline';
+                lastControllerWarnLevel = 'ok';
+                return;
+            }
+            const pct = Math.round(Math.max(0, Math.min(100, percent)));
+            voltGamepadVal.textContent = pct + (chargingHint ? '⚡' : '');
+            voltGamepadBar.style.width = pct + '%';
+
+            let level = 'ok';
+            if (pct < 20) level = 'critical';
+            else if (pct < 40) level = 'warn';
+
+            voltGamepadCell.className = 'volt-cell' + (level === 'ok' ? '' : ' ' + level);
+
+            if (level === 'critical' && lastControllerWarnLevel !== 'critical') {
+                showToast(`⚠ Bateri controller kritikal: ${pct}%`, 'error', 3500);
+            } else if (level === 'warn' && lastControllerWarnLevel === 'ok') {
+                showToast(`Bateri controller rendah: ${pct}%`, 'error', 2800);
+            }
+            lastControllerWarnLevel = level;
+        }
+
+        // Baca bateri controller menggunakan apa-apa API yang tersedia.
+        // Return true jika dapat bacaan sebenar, false jika tidak.
+        function readControllerBattery(gp) {
+            if (!gp) return false;
+            // Chromium eksperimental: gamepad.batteryLevel (0..1) atau gamepad.battery.level
+            if (typeof gp.batteryLevel === 'number') {
+                setControllerBattery(gp.batteryLevel * 100, gp.charging);
+                return true;
+            }
+            if (gp.battery && typeof gp.battery.level === 'number') {
+                setControllerBattery(gp.battery.level * 100, gp.battery.charging);
+                return true;
+            }
+            return false;
+        }
+
+        // Refresh berkala untuk bateri controller
+        setInterval(() => {
+            const pads = navigator.getGamepads ? navigator.getGamepads() : [];
+            const gp = pads[0];
+            if (gp) {
+                if (!readControllerBattery(gp)) {
+                    if (!voltGamepadCell.classList.contains('offline')) {
+                        setControllerBattery(null);
+                    }
+                }
+            } else {
+                setControllerBattery(null);
+            }
+        }, 5000);
+
+        // ====================================================================
         // GAMEPAD POLLING
         // ====================================================================
         const dsCard = document.getElementById('dsCard');
@@ -1075,10 +1269,8 @@
 
         btnCalibrate.addEventListener('click', () => {
             const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
-            // BUGFIX: was `gp = gamepads` (whole array). Need first pad.
             const gp = gamepads[0];
             if (gp) {
-                // BUGFIX: was `gp.axes` (whole array). Need axes[0]/axes[1].
                 offsetX = gp.axes[0];
                 offsetY = gp.axes[1];
                 showToast('Joystick dikalibrasi — titik tengah baru ditetapkan', 'success');
@@ -1087,11 +1279,14 @@
             }
         });
 
-        window.addEventListener("gamepadconnected", () => {
+        window.addEventListener("gamepadconnected", (e) => {
             dsStatusEl.textContent = "CONTROLLER ACQUIRED";
             dsStatusEl.classList.remove('anim-pulse');
             dsCard.classList.add('active');
             showToast('Controller acquired', 'success');
+            // Cuba baca bateri serta-merta
+            const pads = navigator.getGamepads ? navigator.getGamepads() : [];
+            readControllerBattery(pads[e.gamepad.index] || pads[0]);
         });
 
         window.addEventListener("gamepaddisconnected", () => {
@@ -1109,6 +1304,7 @@
             [svgDpadUp, svgDpadDown, svgDpadLeft, svgDpadRight].forEach(el => el && el.classList.remove('pressed'));
             cX = 0; cY = 0; offsetX = 0; offsetY = 0;
             lX = 999; lY = 999;
+            setControllerBattery(null);
             send("X+00,Y+00\n");
         });
 
@@ -1126,11 +1322,9 @@
 
         function pollGamepad() {
             const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
-            // BUGFIX: was `gp = gamepads` (entire array)
             const gp = gamepads[0];
 
             if (gp) {
-                // BUGFIX: was `gp.axes - offsetX/Y` (subtracting array from number)
                 let ax = gp.axes[0] - offsetX;
                 let ay = gp.axes[1] - offsetY;
                 ax = Math.max(-1, Math.min(1, ax));
@@ -1149,7 +1343,6 @@
                 if (Math.abs(ax) < GP_DEADZONE) ax = 0;
                 if (Math.abs(ay) < GP_DEADZONE) ay = 0;
 
-                // BUGFIX: D-pad button indices were missing (12=Up, 13=Down, 14=Left, 15=Right)
                 const upPressed    = !!(gp.buttons[12] && gp.buttons[12].pressed);
                 const downPressed  = !!(gp.buttons[13] && gp.buttons[13].pressed);
                 const leftPressed  = !!(gp.buttons[14] && gp.buttons[14].pressed);
@@ -1161,7 +1354,7 @@
                 setSvgPressed(svgDpadRight, rightPressed);
 
                 let dpadActive = false; let dpX = 0; let dpY = 0;
-                // D-pad uses same convention as stick: Y-positive = up = forward
+                // D-pad guna konvensyen sama dengan stick: Y-positif = atas = depan
                 if (upPressed)    { dpY =  90; dpadActive = true; }
                 if (downPressed)  { dpY = -90; dpadActive = true; }
                 if (leftPressed)  { dpX = -90; dpadActive = true; }
@@ -1183,7 +1376,6 @@
                     lX = cX; lY = cY; lastSendTime = now;
                 }
 
-                // BUGFIX: face button indices were missing (0=A/Cross, 1=B/Circle, 2=X/Square, 3=Y/Triangle)
                 if (gp.buttons[0] && gp.buttons[0].pressed && !gpState.cross) {
                     gpState.cross = true; setStripState(cellBtn0, outPsCross, true); setSvgPressed(svgBtn0, true); send("A\n");
                 } else if (gp.buttons[0] && !gp.buttons[0].pressed && gpState.cross) {
