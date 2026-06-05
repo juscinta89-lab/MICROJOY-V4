@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>MICROJOY UNIVERSAL v2.5</title>
+    <title>MICROJOY UNIVERSAL v2.6</title>
 
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0a0a0c" id="metaThemeColor">
@@ -239,6 +239,17 @@
             filter: drop-shadow(0 0 5px var(--cyan-glow));
         }
 
+        /* Shoulder/Trigger highlight bila L2/R2 ditekan */
+        .pad-trigger { transition: all 0.1s ease-out; }
+        .pad-trigger.pressed {
+            stroke: var(--cyan-glow);
+            fill: var(--cyan-glow);
+            fill-opacity: 0.25;
+            stroke-width: 2.2;
+            filter: drop-shadow(0 0 6px var(--cyan-glow));
+        }
+        .pad-trigger.pressed + text { fill: var(--cyan-glow); }
+
         .btn-cross    { color: #6dc2ff; }
         .btn-circle   { color: #ff5f5f; }
         .btn-square   { color: #ff7ee0; }
@@ -300,6 +311,52 @@
         }
         .axis-cell .axis-val { color: var(--text-main); font-weight: bold; }
         .axis-cell .axis-val.val-active { color: var(--theme-red); text-shadow: 0 0 8px var(--theme-red-glow); }
+
+        /* ===== THROTTLE (L2/R2) BAR ===== */
+        .throttle-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            align-items: stretch;
+        }
+        .throttle-cell {
+            flex: 1;
+            background: var(--row-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 8px;
+            padding: 8px 12px;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.2s;
+        }
+        .throttle-cell .thr-label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+        .throttle-cell .thr-val { color: var(--text-main); font-weight: bold; }
+        .throttle-cell .thr-bar {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .throttle-cell .thr-bar-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 3px;
+            transition: width 0.05s linear;
+        }
+        .throttle-cell.fwd .thr-bar-fill { background: var(--success); box-shadow: 0 0 8px var(--success-shadow); }
+        .throttle-cell.rev .thr-bar-fill { background: var(--gen-amber); box-shadow: 0 0 8px rgba(255,170,0,0.4); }
+        .throttle-cell.fwd { border-color: var(--success-shadow); }
+        .throttle-cell.rev { border-color: var(--gen-amber); }
+        .throttle-cell.fwd .thr-val { color: var(--success); }
+        .throttle-cell.rev .thr-val { color: var(--gen-amber); }
 
         .tel-tx-row {
             background: var(--tx-bg); border: 1px solid var(--tx-border);
@@ -471,7 +528,7 @@
     <div class="header">
         <div class="brand-container">
             <div class="brand-line">MICROJOY UNIVERSAL</div>
-            <div class="ver-tag">SYSTEM v2.5 // ALIMIN</div>
+            <div class="ver-tag">SYSTEM v2.6 // ALIMIN</div>
         </div>
         <div class="header-controls">
             <select id="controllerType" class="btn-icon" aria-label="Controller Type">
@@ -497,6 +554,17 @@
             <div class="axis-row">
                 <div class="axis-cell"><span>AXIS-X</span><span class="axis-val" id="psX">0.00</span></div>
                 <div class="axis-cell"><span>AXIS-Y</span><span class="axis-val" id="psY">0.00</span></div>
+            </div>
+
+            <div class="throttle-row">
+                <div class="throttle-cell" id="cellR2">
+                    <div class="thr-label"><span>R2 ▲ FORWARD</span><span class="thr-val" id="psR2">0.00</span></div>
+                    <div class="thr-bar"><div class="thr-bar-fill" id="barR2"></div></div>
+                </div>
+                <div class="throttle-cell" id="cellL2">
+                    <div class="thr-label"><span>L2 ▼ REVERSE</span><span class="thr-val" id="psL2">0.00</span></div>
+                    <div class="thr-bar"><div class="thr-bar-fill" id="barL2"></div></div>
+                </div>
             </div>
 
             <div class="ctl-status-strip">
@@ -585,6 +653,11 @@
   <path class="line-body" d="M 415 65 Q 425 50 390 50 L 345 50 Q 320 50 325 70 Z"/>
   <text x="148" y="64" font-size="9" text-anchor="middle">L1</text>
   <text x="372" y="64" font-size="9" text-anchor="middle">R1</text>
+
+  <path id="svgTrigL2" class="line-thin pad-trigger" d="M 112 44 Q 110 33 138 33 L 168 33 Q 182 33 180 46 L 178 50 L 114 50 Z"/>
+  <text x="146" y="44" font-size="8" text-anchor="middle">L2</text>
+  <path id="svgTrigR2" class="line-thin pad-trigger" d="M 408 44 Q 410 33 382 33 L 352 33 Q 338 33 340 46 L 342 50 L 406 50 Z"/>
+  <text x="374" y="44" font-size="8" text-anchor="middle">R2</text>
 
   <line class="line-thin" x1="225" y1="76" x2="295" y2="76"/>
   <rect x="227" y="78" width="66" height="3" rx="1" fill="var(--ps-light)" stroke="none">
@@ -682,6 +755,11 @@
   <text x="143" y="62" font-size="9" text-anchor="middle">LB</text>
   <text x="377" y="62" font-size="9" text-anchor="middle">RB</text>
 
+  <path id="svgTrigL2" class="line-thin pad-trigger" d="M 100 42 Q 92 30 122 30 L 168 30 Q 182 30 180 44 L 178 48 L 102 48 Z"/>
+  <text x="140" y="42" font-size="8" text-anchor="middle">LT</text>
+  <path id="svgTrigR2" class="line-thin pad-trigger" d="M 420 42 Q 428 30 398 30 L 352 30 Q 338 30 340 44 L 342 48 L 418 48 Z"/>
+  <text x="380" y="42" font-size="8" text-anchor="middle">RT</text>
+
   <path class="line-body" d="
     M 110 88
     C 70 86, 42 100, 35 150
@@ -758,12 +836,12 @@
 
   <path class="line-body" d="M 105 65 Q 95 50 125 50 L 180 50 Q 200 50 195 70 Z"/>
   <text x="148" y="64" font-size="8" text-anchor="middle">L</text>
-  <path class="line-thin" d="M 110 70 L 110 78 Q 115 80 175 80 L 180 70"/>
+  <path id="svgTrigL2" class="line-thin pad-trigger" d="M 110 70 L 110 78 Q 115 80 175 80 L 180 70 Z"/>
   <text x="148" y="76" font-size="6" text-anchor="middle">ZL</text>
 
   <path class="line-body" d="M 415 65 Q 425 50 395 50 L 340 50 Q 320 50 325 70 Z"/>
   <text x="372" y="64" font-size="8" text-anchor="middle">R</text>
-  <path class="line-thin" d="M 410 70 L 410 78 Q 405 80 345 80 L 340 70"/>
+  <path id="svgTrigR2" class="line-thin pad-trigger" d="M 410 70 L 410 78 Q 405 80 345 80 L 340 70 Z"/>
   <text x="372" y="76" font-size="6" text-anchor="middle">ZR</text>
 
   <path class="line-body" d="
@@ -912,6 +990,7 @@
 
         let svgStick, svgBtn0, svgBtn1, svgBtn2, svgBtn3;
         let svgDpadUp, svgDpadDown, svgDpadLeft, svgDpadRight;
+        let svgTrigL2, svgTrigR2;
 
         function bindSvgRefs() {
             svgStick     = document.getElementById('svgStick');
@@ -923,6 +1002,8 @@
             svgDpadDown  = document.getElementById('svgDpadDown');
             svgDpadLeft  = document.getElementById('svgDpadLeft');
             svgDpadRight = document.getElementById('svgDpadRight');
+            svgTrigL2    = document.getElementById('svgTrigL2');
+            svgTrigR2    = document.getElementById('svgTrigR2');
         }
 
         const STICK_ORIGINS = {
@@ -1440,6 +1521,14 @@
         const outPsSquare = document.getElementById('psSquare');
         const outPsTriangle = document.getElementById('psTriangle');
 
+        // Telemetri & paparan throttle L2/R2
+        const outPsR2 = document.getElementById('psR2');
+        const outPsL2 = document.getElementById('psL2');
+        const barR2 = document.getElementById('barR2');
+        const barL2 = document.getElementById('barL2');
+        const cellR2 = document.getElementById('cellR2');
+        const cellL2 = document.getElementById('cellL2');
+
         const cellDpad = document.getElementById('cellDpad');
         const cellBtn0 = document.getElementById('cellBtn0');
         const cellBtn1 = document.getElementById('cellBtn1');
@@ -1448,6 +1537,7 @@
 
         let gpState = { cross: false, circle: false, square: false, triangle: false };
         const GP_DEADZONE = 0.15;
+        const TRIG_DEADZONE = 0.05; // Deadzone untuk trigger analog L2/R2
 
         let offsetX = 0;
         let offsetY = 0;
@@ -1465,6 +1555,40 @@
                 showToast('Sila sambungkan controller terlebih dahulu', 'error');
             }
         });
+
+        // Baca nilai trigger analog. DS4/DualSense biasanya dedahkan L2/R2 sebagai
+        // buttons[6]/buttons[7] dengan .value (0..1). Sesetengah pad (terutama
+        // sambungan Bluetooth tanpa driver rasmi) dedahkannya sebagai axes; kita
+        // sediakan sandaran membaca paksi jika butang tiada.
+        function readTrigger(gp, btnIndex, axisIndex) {
+            if (gp.buttons[btnIndex] && typeof gp.buttons[btnIndex].value === 'number') {
+                const v = gp.buttons[btnIndex].value;
+                if (v > 0) return v;
+                if (gp.buttons[btnIndex].pressed) return 1;
+            }
+            // Sandaran: paksi (julat -1 rehat .. +1 ditekan penuh)
+            if (axisIndex !== null && gp.axes.length > axisIndex && typeof gp.axes[axisIndex] === 'number') {
+                const raw = gp.axes[axisIndex];
+                const norm = (raw + 1) / 2; // petakan -1..1 -> 0..1
+                if (norm > 0.02) return norm;
+            }
+            return 0;
+        }
+
+        function updateTriggerVisual(r2val, l2val) {
+            // Paparan nilai berangka
+            outPsR2.textContent = r2val.toFixed(2);
+            outPsL2.textContent = l2val.toFixed(2);
+            // Bar isian (0..100%)
+            barR2.style.width = Math.round(r2val * 100) + '%';
+            barL2.style.width = Math.round(l2val * 100) + '%';
+            // Highlight sel
+            if (r2val > 0) cellR2.classList.add('fwd'); else cellR2.classList.remove('fwd');
+            if (l2val > 0) cellL2.classList.add('rev'); else cellL2.classList.remove('rev');
+            // Highlight trigger pada gambar controller
+            setSvgPressed(svgTrigR2, r2val > 0);
+            setSvgPressed(svgTrigL2, l2val > 0);
+        }
 
         window.addEventListener("gamepadconnected", (e) => {
             dsStatusEl.textContent = "CONTROLLER ACQUIRED";
@@ -1489,6 +1613,7 @@
             [outPsX, outPsY].forEach(el => el.classList.remove('val-active'));
             [cellDpad, cellBtn0, cellBtn1, cellBtn2, cellBtn3].forEach(el => el.classList.remove('active'));
             updateStickVisual(0, 0);
+            updateTriggerVisual(0, 0);
             [svgBtn0, svgBtn1, svgBtn2, svgBtn3].forEach(el => el && el.classList.remove('pressed'));
             [svgDpadUp, svgDpadDown, svgDpadLeft, svgDpadRight].forEach(el => el && el.classList.remove('pressed'));
             cX = 0; cY = 0; offsetX = 0; offsetY = 0;
@@ -1532,6 +1657,18 @@
                 if (Math.abs(ax) < GP_DEADZONE) ax = 0;
                 if (Math.abs(ay) < GP_DEADZONE) ay = 0;
 
+                // ---- TRIGGER L2 / R2 (THROTTLE) ----
+                // R2 = buttons[7] (sandaran axes[5]) -> ke HADAPAN
+                // L2 = buttons[6] (sandaran axes[4]) -> ke BELAKANG
+                let r2val = readTrigger(gp, 7, 5);
+                let l2val = readTrigger(gp, 6, 4);
+                if (r2val < TRIG_DEADZONE) r2val = 0;
+                if (l2val < TRIG_DEADZONE) l2val = 0;
+                updateTriggerVisual(r2val, l2val);
+                // Throttle: R2 positif (depan), L2 negatif (belakang).
+                // Makin kuat tekan, makin laju.
+                const throttle = Math.round((r2val - l2val) * 90);
+
                 const upPressed    = !!(gp.buttons[12] && gp.buttons[12].pressed);
                 const downPressed  = !!(gp.buttons[13] && gp.buttons[13].pressed);
                 const leftPressed  = !!(gp.buttons[14] && gp.buttons[14].pressed);
@@ -1554,7 +1691,13 @@
                     setStripState(cellDpad, outPsDpad, true, "ACTIVE");
                 } else {
                     cX = Math.round(ax * 90);
-                    cY = Math.round(-ay * 90);
+                    // Keutamaan gerakan depan/belakang: throttle L2/R2.
+                    // Jika tiada trigger ditekan, kekal guna paksi Y stick.
+                    if (throttle !== 0) {
+                        cY = throttle;
+                    } else {
+                        cY = Math.round(-ay * 90);
+                    }
                     setStripState(cellDpad, outPsDpad, false, "ON", "IDLE");
                 }
 
